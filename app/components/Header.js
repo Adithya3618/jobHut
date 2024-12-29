@@ -12,7 +12,7 @@ export default function Header() {
           >
             <img 
               className="w-10 h-10 mr-2" 
-              src="/logo.jpg" // Path relative to the public directory
+              src="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true"// Path relative to the public directory
               alt="logo"
             />
             JobHut
