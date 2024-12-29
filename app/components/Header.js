@@ -16,7 +16,7 @@ export default function Header() {
           >
             <img
               className="w-10 h-10 mr-2"
-              src="https://raw.githubusercontent.com/saibadarinadh/jobHut/refs/heads/main/public/LOGO.jpg?token=GHSAT0AAAAAACVM47KGWYE5RLLT7WQV4COCZ3RD5GQ"
+              src="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true"
               alt="logo"
             />
 

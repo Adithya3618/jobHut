@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
         {/* Favicon */}
         <link 
           rel="icon" 
-          href="https://raw.githubusercontent.com/saibadarinadh/jobHut/refs/heads/main/public/LOGO.jpg?token=GHSAT0AAAAAACVM47KGWYE5RLLT7WQV4COCZ3RD5GQ" 
+          href="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true" 
           type="image/jpeg" 
         />
 
