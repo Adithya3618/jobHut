@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AddJobForm from '../../components/AddJobForm'
 import JobManagement from '../../components/JobManagement'
+import Footer from '../components/Footer'
+import Header from '../components/Header'
 
 export default function AdminDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -24,6 +26,8 @@ export default function AdminDashboard() {
   }
 
   return (
+    <div>
+    <Header/>
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
       
@@ -56,6 +60,9 @@ export default function AdminDashboard() {
 
       {activeTab === 'jobs' ? <JobManagement /> : <AddJobForm />}
     </div>
+    <Footer/>
+    </div>
+    
   )
 }
 
