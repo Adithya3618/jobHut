@@ -16,7 +16,7 @@ export default function Header() {
           >
             <img 
               className="w-10 h-10 mr-2" 
-              src="/logo.jpg"
+               src="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true" // Using external link
               alt="logo"
             />
             JobHut
