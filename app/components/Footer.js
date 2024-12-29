@@ -12,9 +12,10 @@ export default function Footer() {
           <div className="w-full md:w-1/4 mb-6 md:mb-0">
             <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
             <ul className="text-sm">
-              <li><Link href="/jobs">All Jobs</Link></li>
+              <li><Link href="/">Home</Link></li>
               <li><Link href="/about">About Us</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
+              <li><Link href="/contact">Contact Us</Link></li>
+              <li><Link href="/privacy-policy">Privacy Policy</Link></li>
             </ul>
           </div>
           <div className="w-full md:w-1/4 mb-6 md:mb-0">
@@ -22,11 +23,17 @@ export default function Footer() {
             <ul className="text-sm">
               <li><Link href="/jobs?category=technical">Technical Jobs</Link></li>
               <li><Link href="/jobs?category=non-technical">Non-Technical Jobs</Link></li>
+              <li><Link href="/jobs?category=internship">Internships</Link></li>
             </ul>
           </div>
           <div className="w-full md:w-1/4">
-            <h3 className="text-lg font-semibold mb-2">Admin</h3>
-            <Link href="/admin" className="text-sm">Admin Login</Link>
+            <h3 className="text-lg font-semibold mb-2">Legal</h3>
+            <ul className="text-sm">
+              <li><Link href="/disclaimer">Disclaimer</Link></li>
+              <li><Link href="/privacy-policy">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service">Terms of Service</Link></li>
+              <li><Link href="/admin">Admin Login</Link></li>
+            </ul>
           </div>
         </div>
         <div className="mt-8 text-center text-sm">

@@ -1,150 +1,164 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, MapPin, Briefcase, Award, Banknote } from 'lucide-react';
+
+const TECHNICAL_FIELDS = [
+  'Software Developer',
+  'Data Analyst',
+  'Web Developer',
+  'DevOps Engineer',
+  'System Engineer',
+  'Data Scientist',
+  'QA Engineer',
+  'Other'
+];
 
 export default function SearchForm() {
   const [filters, setFilters] = useState({
     keyword: '',
-    category: '',
-    jobType: '',
     location: '',
     salary: '',
     experience: '',
-    qualification: '',
-  })
-  const router = useRouter()
+    category: '',
+    subCategory: '',
+    jobType: '',
+  });
+  const router = useRouter();
 
   const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value })
-  }
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const searchParams = new URLSearchParams()
-    Object.keys(filters).forEach((key) => {
-      if (filters[key]) searchParams.append(key, filters[key])
-    })
-    router.push(`/jobs?${searchParams.toString()}`)
-  }
+    e.preventDefault();
+    const searchParams = new URLSearchParams(
+      Object.entries(filters).filter(([, value]) => value)
+    );
+    router.push(`/jobs?${searchParams.toString()}`);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-xl font-semibold mb-4">Search Jobs</h2>
+    <div className="w-full max-w-5xl mx-auto px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
+      >
+        {/* Main Search Bar */}
+        <div className="flex flex-col space-y-4">
+          <div className="relative">
+            <input
+              type="text"
+              name="keyword"
+              value={filters.keyword}
+              onChange={handleChange}
+              placeholder="Search jobs, companies, fields, or subcategories"
+              className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+            />
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              size={24}
+            />
+          </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="keyword">
-          Keyword
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="keyword"
-          type="text"
-          name="keyword"
-          value={filters.keyword}
-          onChange={handleChange}
-          placeholder="Job title, company, or keywords"
-        />
-      </div>
+          {/* Filter Options */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="relative">
+              <MapPin
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                name="location"
+                value={filters.location}
+                onChange={handleChange}
+                placeholder="Location"
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              />
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
-          Category
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="category"
-          type="text"
-          name="category"
-          value={filters.category}
-          onChange={handleChange}
-          placeholder="Job category"
-        />
-      </div>
+            <div className="relative col-span-full md:col-span-2 lg:col-span-1">
+              <Banknote
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="number"
+                name="salary"
+                value={filters.salary}
+                onChange={handleChange}
+                placeholder="Minimum Salary"
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              />
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="jobType">
-          Job Type
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="jobType"
-          type="text"
-          name="jobType"
-          value={filters.jobType}
-          onChange={handleChange}
-          placeholder="Full-time, Part-time, etc."
-        />
-      </div>
+            <div className="relative">
+              <Award
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <select
+                name="experience"
+                value={filters.experience}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
+              >
+                <option value="">Experience Level</option>
+                <option value="pursuing">Pursuing</option>
+                <option value="fresher">Fresher</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
-          Location
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="location"
-          type="text"
-          name="location"
-          value={filters.location}
-          onChange={handleChange}
-          placeholder="Location"
-        />
-      </div>
+            <div className="relative">
+              <Briefcase
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <select
+                name="category"
+                value={filters.category}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
+              >
+                <option value="">Category</option>
+                <option value="technical">Technical</option>
+                <option value="non-technical">Non-Technical</option>
+              </select>
+            </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="salary">
-          Salary
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="salary"
-          type="text"
-          name="salary"
-          value={filters.salary}
-          onChange={handleChange}
-          placeholder="Salary range"
-        />
-      </div>
+            
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="experience">
-          Experience
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="experience"
-          type="text"
-          name="experience"
-          value={filters.experience}
-          onChange={handleChange}
-          placeholder="Experience required"
-        />
-      </div>
+            <div className="relative">
+              <select
+                name="jobType"
+                value={filters.jobType}
+                onChange={handleChange}
+                className="w-full pl-4 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
+              >
+                <option value="">Job Type</option>
+                <option value="intern">Intern</option>
+                <option value="fulltime">Full Time</option>
+                <option value="intern+full">Intern + Full Time</option>
+                <option value="parttime">Part Time</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="qualification">
-          Qualification
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="qualification"
-          type="text"
-          name="qualification"
-          value={filters.qualification}
-          onChange={handleChange}
-          placeholder="Required qualification"
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
-        >
-          Search
-        </button>
-      </div>
-    </form>
-  )
+        <div className="mt-6 flex justify-end">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-all duration-200 flex items-center space-x-2"
+          >
+            <Search size={20} />
+            <span>Search Jobs</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }

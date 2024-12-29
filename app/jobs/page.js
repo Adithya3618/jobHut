@@ -17,6 +17,7 @@ export default function Jobs({ searchParams }) {
           
           {/* Right side: Job List */}
           <div className="w-full lg:w-1/3">
+          
             <JobList searchParams={searchParams} />
           </div>
         </div>
@@ -25,3 +26,5 @@ export default function Jobs({ searchParams }) {
     </div>
   );
 }
+
+
