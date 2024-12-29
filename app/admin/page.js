@@ -8,7 +8,7 @@ export default function Admin() {
       <Header />
       <h1>Admin Login</h1>
       <AdminLogin />
-      <footer/>
+      <Footer/>
     </div>
   )
 }
