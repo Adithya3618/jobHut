@@ -6,7 +6,6 @@ export default function Admin() {
   return (
     <div>
       <Header />
-      <h1>Admin Login</h1>
       <AdminLogin />
       <Footer/>
     </div>

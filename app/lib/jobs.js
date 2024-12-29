@@ -68,6 +68,7 @@ export async function searchJobs(params = {}) {
         { title: { $regex: params.keyword, $options: 'i' } },
         { companyName: { $regex: params.keyword, $options: 'i' } },
         { subCategory: { $regex: params.keyword, $options: 'i' } },
+        { overview: { $regex: params.keyword, $options: 'i' } }, // Include job overview in keyword search
       ];
     }
 
@@ -89,6 +90,7 @@ export async function searchJobs(params = {}) {
     return [];
   }
 }
+
 
 export async function getSimilarJobs(subCategory, limit = 10) {
   try {

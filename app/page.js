@@ -5,7 +5,7 @@ import Footer from './components/Footer'
 import RecentJobs from './components/RecentJobs'
 import SearchForm from './components/SearchForm'
 import JobCategories from './components/JobCategories'
-import Loading from './components/Loading'
+import Loading from './components/loading'
 
 export default function Home() {
   return (

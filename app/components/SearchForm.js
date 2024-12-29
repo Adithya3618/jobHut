@@ -85,7 +85,7 @@ export default function SearchForm() {
             >
               <div className="flex items-center space-x-1">
                 <span className="text-sm">
-                  {isExpanded ? 'Less filters' : 'More filters'}
+                  {isExpanded ? '' : ''}
                 </span>
                 <svg
                   className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
