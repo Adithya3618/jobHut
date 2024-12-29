@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AddJobForm from '../../components/AddJobForm'
 import JobManagement from '../../components/JobManagement'
+import Footer from '../../components/Footer' // Fixed the incorrect import path
+import Header from '../../components/Header' // Fixed the incorrect import path
 
 export default function AdminDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -17,45 +19,48 @@ export default function AdminDashboard() {
     } else {
       setIsLoggedIn(true)
     }
-  }, [])
+  }, [router]) // Added 'router' to the dependency array to avoid potential issues
 
   if (!isLoggedIn) {
-    return null
+    return null // Ensures no UI is rendered until authentication is verified
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-      
-      <div className="mb-8">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('jobs')}
-              className={`${
-                activeTab === 'jobs'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Manage Jobs
-            </button>
-            <button
-              onClick={() => setActiveTab('add')}
-              className={`${
-                activeTab === 'add'
-                  ? 'border-indigo-500 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Add New Job
-            </button>
-          </nav>
+    <div>
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+        
+        <div className="mb-8">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab('jobs')}
+                className={`${
+                  activeTab === 'jobs'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Manage Jobs
+              </button>
+              <button
+                onClick={() => setActiveTab('add')}
+                className={`${
+                  activeTab === 'add'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Add New Job
+              </button>
+            </nav>
+          </div>
         </div>
-      </div>
 
-      {activeTab === 'jobs' ? <JobManagement /> : <AddJobForm />}
+        {activeTab === 'jobs' ? <JobManagement /> : <AddJobForm />}
+      </div>
+      <Footer />
     </div>
   )
 }
-
