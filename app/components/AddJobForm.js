@@ -272,7 +272,6 @@ export default function AddJobForm() {
                   Salary
                 </label>
                 <input
-                  type="number"
                   name="salary"
                   id="salary"
                   value={job.salary}
@@ -327,7 +326,7 @@ export default function AddJobForm() {
                   value={job.lastDate}
                   onChange={(e) => setJob({ ...job, lastDate: e.target.value })}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  required
+                  
                 />
               </div>
 
