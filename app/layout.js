@@ -1,9 +1,9 @@
-import './globals.css'
+import './globals.css';
 
 export const metadata = {
   title: 'JobHut - Find Your Dream Job',
   description: 'Job listing platform for technical and non-technical positions',
-}
+};
 
 export default function RootLayout({ children }) {
   return (
@@ -19,7 +19,11 @@ export default function RootLayout({ children }) {
         />
 
         {/* Favicon */}
-        <link rel="icon" href="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true"  />
+        <link
+          rel="icon"
+          href="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true" // Using external link
+          type="image/jpeg"
+        />
 
         {/* Google AdSense Script */}
         <script
@@ -34,7 +38,7 @@ export default function RootLayout({ children }) {
             className="adsbygoogle"
             style={{ display: 'block' }}
             data-ad-client="ca-pub-XXXXXXX" // Replace with your AdSense client ID
-            data-ad-slot="XXXXXXX"        // Replace with your ad slot ID
+            data-ad-slot="XXXXXXX" // Replace with your ad slot ID
             data-ad-format="auto"
           ></ins>
         </div>
@@ -42,5 +46,5 @@ export default function RootLayout({ children }) {
         {children}
       </body>
     </html>
-  )
+  );
 }
