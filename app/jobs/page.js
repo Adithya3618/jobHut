@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import JobList from '../components/JobList';
 import AdvancedSearch from '../components/AdvancedSearch';
 
-export default function Jobs({ searchParams }) {
+export default async function Jobs({ searchParams }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -11,13 +11,12 @@ export default function Jobs({ searchParams }) {
         <h1 className="text-3xl font-bold mb-8 text-center">Job Listings</h1>
         <div className="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
           {/* Left side: Search Form */}
-          <div className="w-full lg:w-1/3">
+          <div className="w-full lg:w-1/4">
             <AdvancedSearch />
           </div>
           
           {/* Right side: Job List */}
-          <div className="w-full lg:w-1/3">
-          
+          <div className="w-full lg:w-3/4">
             <JobList searchParams={searchParams} />
           </div>
         </div>
@@ -26,5 +25,3 @@ export default function Jobs({ searchParams }) {
     </div>
   );
 }
-
-

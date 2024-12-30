@@ -12,15 +12,19 @@ function serializeJob(job) {
   };
 }
 
-export async function getRecentJobs(limit = 6) {
+export async function getRecentJobs(limit = 9) {
   try {
+    console.log('Attempting to connect to the database...');
     const client = await clientPromise;
+    console.log('Connected to the database successfully');
     const db = client.db('jobhut');
+    console.log('Fetching recent jobs...');
     const jobs = await db.collection('jobs')
       .find()
       .sort({ datePosted: -1 })
       .limit(limit)
       .toArray();
+    console.log(`Fetched ${jobs.length} recent jobs`);
     return jobs.map(serializeJob);
   } catch (error) {
     console.error('Error in getRecentJobs:', error);
@@ -34,7 +38,7 @@ export async function getAllJobs() {
     const db = client.db('jobhut');
     const jobs = await db.collection('jobs')
       .find()
-      .sort({ datePosted: -1 }) // Sort by datePosted in descending order
+      .sort({ datePosted: -1 })
       .toArray();
     return jobs.map(serializeJob);
   } catch (error) {
@@ -68,7 +72,7 @@ export async function searchJobs(params = {}) {
         { title: { $regex: params.keyword, $options: 'i' } },
         { companyName: { $regex: params.keyword, $options: 'i' } },
         { subCategory: { $regex: params.keyword, $options: 'i' } },
-        { overview: { $regex: params.keyword, $options: 'i' } }, // Include job overview in keyword search
+        { overview: { $regex: params.keyword, $options: 'i' } },
       ];
     }
 
@@ -78,11 +82,11 @@ export async function searchJobs(params = {}) {
     if (params.experience) query.experience = { $regex: params.experience, $options: 'i' };
     if (params.qualification) query.qualification = { $regex: params.qualification, $options: 'i' };
 
-    console.log('Search query:', query); // Debug logging
+    console.log('Search query:', query);
 
     const jobs = await db.collection('jobs')
       .find(query)
-      .sort({ datePosted: -1 }) // Sort by datePosted in descending order
+      .sort({ datePosted: -1 })
       .toArray();
     return jobs.map(serializeJob);
   } catch (error) {
@@ -91,15 +95,14 @@ export async function searchJobs(params = {}) {
   }
 }
 
-
-export async function getSimilarJobs(subCategory, limit = 10) {
+export async function getSimilarJobs(subCategory, limit = 9) {
   try {
     const client = await clientPromise;
     const db = client.db('jobhut');
     const jobs = await db
       .collection('jobs')
       .find({ subCategory })
-      .sort({ datePosted: -1 }) // Sort by datePosted in descending order
+      .sort({ datePosted: -1 })
       .limit(limit)
       .toArray();
     return jobs.map(serializeJob);

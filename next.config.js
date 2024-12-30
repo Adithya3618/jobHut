@@ -8,8 +8,18 @@ const nextConfig = {
       },
     ],
   },
-  // Remove the env section as we're using the URI directly in mongodb.js
-}
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        net: false,
+        tls: false,
+        fs: false,
+      };
+    }
+    return config;
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
 
