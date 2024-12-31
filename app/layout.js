@@ -19,10 +19,10 @@ export default function RootLayout({ children }) {
         />
 
         {/* Favicon */}
-        <link 
-          rel="icon" 
-          href="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true" 
-          type="image/jpeg" 
+        <link
+          rel="icon"
+          href="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true"
+          type="image/jpeg"
         />
 
         {/* Google AdSense Script */}

@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import JobList from '../components/JobList';
 import AdvancedSearch from '../components/AdvancedSearch';
+import Loading from '../components/Loading';
 
 export default async function Jobs({ searchParams }) {
   return (
@@ -12,12 +14,16 @@ export default async function Jobs({ searchParams }) {
         <div className="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
           {/* Left side: Search Form */}
           <div className="w-full lg:w-1/4">
-            <AdvancedSearch />
+            <Suspense fallback={<Loading />}>
+              <AdvancedSearch />
+            </Suspense>
           </div>
           
           {/* Right side: Job List */}
           <div className="w-full lg:w-3/4">
-            <JobList searchParams={searchParams} />
+            <Suspense fallback={<Loading />}>
+              <JobList searchParams={searchParams} />
+            </Suspense>
           </div>
         </div>
       </main>
@@ -25,3 +31,4 @@ export default async function Jobs({ searchParams }) {
     </div>
   );
 }
+
