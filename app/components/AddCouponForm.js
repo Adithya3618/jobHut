@@ -27,7 +27,10 @@ export default function AddCouponForm() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         },
-        body: JSON.stringify(coupon),
+        body: JSON.stringify({
+          ...coupon,
+          createdAt: new Date().toISOString()
+        }),
       })
 
       if (response.ok) {
@@ -39,6 +42,7 @@ export default function AddCouponForm() {
           linkToApply: '',
           description: '',
         })
+        router.push('/admin/dashboard?tab=coupons')
       } else {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to add coupon')

@@ -73,6 +73,7 @@ export default function CouponManagement() {
             <h3 className="text-lg font-semibold">{coupon.name}</h3>
             <p className="text-sm text-gray-600">Coupon ID: {coupon.couponId}</p>
             <p className="mt-2">{coupon.description}</p>
+            <p className="text-sm text-gray-500 mt-2">Created: {new Date(coupon.createdAt).toLocaleString()}</p>
             <div className="mt-4 flex justify-end space-x-2">
               <button
                 onClick={() => router.push(`/admin/edit-coupon/${coupon._id}`)}

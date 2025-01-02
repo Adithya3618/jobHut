@@ -6,7 +6,10 @@ export async function GET(request) {
   try {
     const client = await clientPromise
     const db = client.db('jobhut')
-    const coupons = await db.collection('coupons').find({}).toArray()
+    const coupons = await db.collection('coupons')
+      .find({})
+      .sort({ createdAt: -1 })  // Sort by creation date, newest first
+      .toArray()
     
     const serializedCoupons = coupons.map(coupon => ({
       ...coupon,
@@ -35,7 +38,14 @@ export async function POST(request) {
     const coupon = await request.json()
     const client = await clientPromise
     const db = client.db('jobhut')
-    const result = await db.collection('coupons').insertOne(coupon)
+    
+    // Add createdAt field to the coupon
+    const couponWithTimestamp = {
+      ...coupon,
+      createdAt: new Date()
+    }
+    
+    const result = await db.collection('coupons').insertOne(couponWithTimestamp)
     return NextResponse.json({ success: true, _id: result.insertedId.toString() })
   } catch (error) {
     console.error('Error in POST /api/coupons:', error)

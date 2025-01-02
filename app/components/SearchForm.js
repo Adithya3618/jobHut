@@ -43,57 +43,64 @@ export default function SearchForm() {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCategorySelect = (category) => {
-    // Directly navigate when category is selected
-    router.push(`/jobs?category=${category}`);
-    setFilters((prev) => ({
-      ...prev,
-      category: prev.category === category ? '' : category
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const searchParams = new URLSearchParams(
-      Object.entries(filters).filter(([, value]) => value)
-    );
+    const searchParams = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        searchParams.append(key, value);
+      }
+    });
     router.push(`/jobs?${searchParams.toString()}`);
   };
 
   useEffect(() => {
+    // Reset subCategory when category changes
     setFilters(prev => ({ ...prev, subCategory: '' }));
   }, [filters.category]);
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const urlFilters = {};
+    searchParams.forEach((value, key) => {
+      urlFilters[key] = value;
+    });
+    setFilters(prev => ({ ...prev, ...urlFilters }));
+  }, []);
+
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 sm:py-8">
+    <div className="w-full max-w-5xl mx-auto">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-3xl shadow-lg p-4 sm:p-8 border border-gray-100 transition-all duration-300 hover:shadow-xl"
+        className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100"
       >
         {/* Main Search Bar */}
-        <div className="flex flex-col space-y-4 sm:space-y-6">
-          <div className="relative group">
+        <div className="flex flex-col space-y-4">
+          <div className="relative">
             <input
               type="text"
               name="keyword"
               value={filters.keyword}
               onChange={handleChange}
-              placeholder="Search jobs, companies, fields..."
-              className="w-full pl-12 sm:pl-14 pr-12 py-3 sm:py-4 text-base sm:text-lg rounded-xl sm:rounded-2xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400"
+              placeholder="Search jobs, companies, fields, or subcategories"
+              className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
               onFocus={() => setIsExpanded(true)}
             />
             <Search
-              className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition-colors duration-200"
-              size={20}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              size={24}
             />
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors duration-200"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <div className="flex items-center space-x-1">
+                <span className="text-sm">
+                  {isExpanded ? 'Less filters' : 'More filters'}
+                </span>
                 <svg
-                  className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -111,14 +118,12 @@ export default function SearchForm() {
 
           {/* Expanded Search Options */}
           <div
-            className={`grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 transition-all duration-500 ease-in-out ${
-              isExpanded ? 'opacity-100 max-h-[1000px] translate-y-0' : 'opacity-0 max-h-0 -translate-y-4 overflow-hidden'
-            }`}
+            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-all duration-300 ${isExpanded ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}
           >
-            <div className="relative group">
+            <div className="relative">
               <MapPin
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition-colors duration-200"
-                size={18}
+                className="absolute left-4 top-1/4 -translate-y-1/2 text-gray-400"
+                size={20}
               />
               <input
                 type="text"
@@ -126,39 +131,80 @@ export default function SearchForm() {
                 value={filters.location}
                 onChange={handleChange}
                 placeholder="Location"
-                className="w-full pl-12 pr-4 py-3 sm:py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400"
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
               />
             </div>
 
-            <div className="relative group">
+            <div className="relative col-span-full md:col-span-2 lg:col-span-1">
+              <Banknote
+                className="absolute left-4 top-1/4 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="number"
+                name="salary"
+                value={filters.salary}
+                onChange={handleChange}
+                placeholder="Minimum Salary"
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              />
+            </div>
+
+            <div className="relative">
               <Award
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition-colors duration-200"
-                size={18}
+                className="absolute left-4 top-1/4 -translate-y-1/2 text-gray-400"
+                size={20}
               />
               <select
                 name="experience"
                 value={filters.experience}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-3 sm:py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 appearance-none bg-white cursor-pointer"
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
               >
                 <option value="">Experience Level</option>
                 <option value="pursuing">Pursuing</option>
                 <option value="fresher">Fresher</option>
                 <option value="other">Other</option>
               </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
             </div>
 
-            <div className="relative group">
+            <div className="relative">
+              <Briefcase
+                className="absolute left-4 top-1/4 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <select
+                name="category"
+                value={filters.category}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
+              >
+                <option value="">Select Category</option>
+                <option value="technical">Technical</option>
+                <option value="non-technical">Non-Technical</option>
+              </select>
+            </div>
+
+            <div className="relative">
+              <select
+                name="subCategory"
+                value={filters.subCategory}
+                onChange={handleChange}
+                className="w-full pl-4 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
+              >
+                <option value="">Select Field</option>
+                {filters.category && (filters.category === 'technical' ? TECHNICAL_FIELDS : NON_TECHNICAL_FIELDS).map((field) => (
+                  <option key={field} value={field}>{field}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="relative">
               <select
                 name="jobType"
                 value={filters.jobType}
                 onChange={handleChange}
-                className="w-full pl-4 pr-4 py-3 sm:py-3.5 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 appearance-none bg-white cursor-pointer"
+                className="w-full pl-4 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
               >
                 <option value="">Job Type</option>
                 <option value="intern">Intern</option>
@@ -166,54 +212,21 @@ export default function SearchForm() {
                 <option value="intern+full">Intern + Full Time</option>
                 <option value="parttime">Part Time</option>
               </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:justify-between">
-          {/* Category Buttons */}
-          <div className="flex space-x-3 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => handleCategorySelect('technical')}
-              className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 ${
-                filters.category === 'technical'
-                  ? 'bg-blue-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <Briefcase size={18} />
-              <span className="font-medium text-sm sm:text-base">Technical</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCategorySelect('non-technical')}
-              className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 ${
-                filters.category === 'non-technical'
-                  ? 'bg-blue-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <Briefcase size={18} />
-              <span className="font-medium text-sm sm:text-base">Non-Technical</span>
-            </button>
-          </div>
-
-          {/* Search Button */}
+        <div className="mt-6 flex justify-end">
           <button
             type="submit"
-            className="w-full sm:w-auto bg-blue-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl hover:bg-blue-600 transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+            className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-all duration-200 flex items-center space-x-2"
           >
-            <Search size={18} />
-            <span className="font-medium text-sm sm:text-base">Search Jobs</span>
+            <Search size={20} />
+            <span>Search Jobs</span>
           </button>
         </div>
       </form>
     </div>
   );
 }
+

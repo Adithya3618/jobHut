@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+// Define constants for field options
 const TECHNICAL_FIELDS = [
   'Software Developer',
   'Data Analyst',
@@ -26,6 +27,8 @@ const NON_TECHNICAL_FIELDS = [
 
 export default function AddJobForm() {
   const router = useRouter()
+  
+  // Initialize job state with default values
   const [job, setJob] = useState({
     title: '',
     companyName: '',
@@ -44,6 +47,7 @@ export default function AddJobForm() {
     applyLink: '',
   })
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -58,41 +62,65 @@ export default function AddJobForm() {
       ...job,
       experience: job.experience === 'other' ? job.otherExperience : job.experience,
       subCategory: job.subCategory === 'Other' ? job.otherSubCategory : job.subCategory,
-      datePosted: new Date(),
-      expirationDate: new Date(job.lastDate)
+      datePosted: new Date().toISOString(),  // Set the current date and time
+      expirationDate: new Date(job.lastDate).toISOString()
     }
 
-    const response = await fetch('/api/jobs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(jobData),
-    })
-
-    if (response.ok) {
-      alert('Job added successfully!')
-      setJob({
-        title: '',
-        companyName: '',
-        companyLogo: '',
-        overview: '',
-        location: '',
-        salary: '',
-        experience: 'pursuing',
-        otherExperience: '',
-        qualification: '',
-        lastDate: '',
-        category: 'technical',
-        subCategory: '',
-        otherSubCategory: '',
-        jobType: 'intern',
-        applyLink: '',
+    try {
+      const response = await fetch('/api/jobs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(jobData),
       })
-    } else {
-      alert('Error adding job')
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to add job')
+      }
+
+      const result = await response.json()
+      
+      if (result.success) {
+        alert('Job added successfully!')
+        // Reset form after successful submission
+        setJob({
+          title: '',
+          companyName: '',
+          companyLogo: '',
+          overview: '',
+          location: '',
+          salary: '',
+          experience: 'pursuing',
+          otherExperience: '',
+          qualification: '',
+          lastDate: '',
+          category: 'technical',
+          subCategory: '',
+          otherSubCategory: '',
+          jobType: 'intern',
+          applyLink: '',
+        })
+        // Optionally, redirect to the job management page or refresh the current page
+        router.push('/admin/dashboard?tab=jobs')
+      } else {
+        throw new Error('Failed to add job')
+      }
+    } catch (error) {
+      console.error('Error adding job:', error)
+      alert(`Error adding job: ${error.message}`)
     }
+  }
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setJob(prevJob => ({
+      ...prevJob,
+      [name]: value
+    }))
   }
 
   return (
@@ -101,7 +129,7 @@ export default function AddJobForm() {
         <div className="md:grid md:grid-cols-2 md:gap-6">
           <div className="mt-5 space-y-6 md:mt-0 md:col-span-2">
             <div className="grid grid-cols-6 gap-6">
-              {/* Basic Information */}
+              {/* Job Title */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                   Job Title
@@ -111,12 +139,13 @@ export default function AddJobForm() {
                   name="title"
                   id="title"
                   value={job.title}
-                  onChange={(e) => setJob({ ...job, title: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   required
                 />
               </div>
 
+              {/* Company Name */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
                   Company Name
@@ -126,13 +155,13 @@ export default function AddJobForm() {
                   name="companyName"
                   id="companyName"
                   value={job.companyName}
-                  onChange={(e) => setJob({ ...job, companyName: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   required
                 />
               </div>
 
-              {/* Category Selection */}
+              {/* Category */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700">
                   Category
@@ -141,7 +170,7 @@ export default function AddJobForm() {
                   id="category"
                   name="category"
                   value={job.category}
-                  onChange={(e) => setJob({ ...job, category: e.target.value, subCategory: '' })}
+                  onChange={handleChange}
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
@@ -150,6 +179,7 @@ export default function AddJobForm() {
                 </select>
               </div>
 
+              {/* Sub-Category (Field) */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="subCategory" className="block text-sm font-medium text-gray-700">
                   Field
@@ -158,7 +188,7 @@ export default function AddJobForm() {
                   id="subCategory"
                   name="subCategory"
                   value={job.subCategory}
-                  onChange={(e) => setJob({ ...job, subCategory: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
@@ -169,6 +199,7 @@ export default function AddJobForm() {
                 </select>
               </div>
 
+              {/* Other Sub-Category */}
               {job.subCategory === 'Other' && (
                 <div className="col-span-6">
                   <label htmlFor="otherSubCategory" className="block text-sm font-medium text-gray-700">
@@ -179,7 +210,7 @@ export default function AddJobForm() {
                     id="otherSubCategory"
                     name="otherSubCategory"
                     value={job.otherSubCategory}
-                    onChange={(e) => setJob({ ...job, otherSubCategory: e.target.value })}
+                    onChange={handleChange}
                     className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     required
                   />
@@ -195,7 +226,7 @@ export default function AddJobForm() {
                   id="experience"
                   name="experience"
                   value={job.experience}
-                  onChange={(e) => setJob({ ...job, experience: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
@@ -205,6 +236,7 @@ export default function AddJobForm() {
                 </select>
               </div>
 
+              {/* Other Experience */}
               {job.experience === 'other' && (
                 <div className="col-span-6 sm:col-span-3">
                   <label htmlFor="otherExperience" className="block text-sm font-medium text-gray-700">
@@ -215,14 +247,14 @@ export default function AddJobForm() {
                     id="otherExperience"
                     name="otherExperience"
                     value={job.otherExperience}
-                    onChange={(e) => setJob({ ...job, otherExperience: e.target.value })}
+                    onChange={handleChange}
                     className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     required
                   />
                 </div>
               )}
 
-              {/* Rest of the form fields */}
+              {/* Company Logo URL */}
               <div className="col-span-6">
                 <label htmlFor="companyLogo" className="block text-sm font-medium text-gray-700">
                   Company Logo URL
@@ -232,11 +264,12 @@ export default function AddJobForm() {
                   name="companyLogo"
                   id="companyLogo"
                   value={job.companyLogo}
-                  onChange={(e) => setJob({ ...job, companyLogo: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
 
+              {/* Job Overview */}
               <div className="col-span-6">
                 <label htmlFor="overview" className="block text-sm font-medium text-gray-700">
                   Job Overview
@@ -246,12 +279,13 @@ export default function AddJobForm() {
                   name="overview"
                   rows={3}
                   value={job.overview}
-                  onChange={(e) => setJob({ ...job, overview: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   required
                 />
               </div>
 
+              {/* Location */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700">
                   Location
@@ -261,41 +295,29 @@ export default function AddJobForm() {
                   name="location"
                   id="location"
                   value={job.location}
-                  onChange={(e) => setJob({ ...job, location: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   required
                 />
               </div>
 
+              {/* Salary */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="salary" className="block text-sm font-medium text-gray-700">
                   Salary
                 </label>
                 <input
+                  type="text"
                   name="salary"
                   id="salary"
                   value={job.salary}
-                  onChange={(e) => setJob({ ...job, salary: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  placeholder="Enter minimum salary"
-                  required
+                  
                 />
-                <div className="mt-4 flex items-center">
-                  <label className="text-sm text-gray-600 pr-2">Salary Range:</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="500000"
-                    step="5000"
-                    value={job.salary || 0}
-                    onChange={(e) => setJob({ ...job, salary: e.target.value })}
-                    className="w-full"
-                  />
-                  <span className="ml-2 text-gray-800">{job.salary || 0}</span>
-                </div>
               </div>
 
-
+              {/* Job Type */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="jobType" className="block text-sm font-medium text-gray-700">
                   Job Type
@@ -304,7 +326,7 @@ export default function AddJobForm() {
                   id="jobType"
                   name="jobType"
                   value={job.jobType}
-                  onChange={(e) => setJob({ ...job, jobType: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   required
                 >
@@ -315,6 +337,7 @@ export default function AddJobForm() {
                 </select>
               </div>
 
+              {/* Last Date to Apply */}
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="lastDate" className="block text-sm font-medium text-gray-700">
                   Last Date to Apply
@@ -324,12 +347,13 @@ export default function AddJobForm() {
                   name="lastDate"
                   id="lastDate"
                   value={job.lastDate}
-                  onChange={(e) => setJob({ ...job, lastDate: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  
+                 
                 />
               </div>
 
+              {/* Qualification */}
               <div className="col-span-6">
                 <label htmlFor="qualification" className="block text-sm font-medium text-gray-700">
                   Qualification
@@ -339,12 +363,13 @@ export default function AddJobForm() {
                   name="qualification"
                   id="qualification"
                   value={job.qualification}
-                  onChange={(e) => setJob({ ...job, qualification: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   required
                 />
               </div>
 
+              {/* Apply Link */}
               <div className="col-span-6">
                 <label htmlFor="applyLink" className="block text-sm font-medium text-gray-700">
                   Apply Link
@@ -354,7 +379,7 @@ export default function AddJobForm() {
                   name="applyLink"
                   id="applyLink"
                   value={job.applyLink}
-                  onChange={(e) => setJob({ ...job, applyLink: e.target.value })}
+                  onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   required
                 />
@@ -364,6 +389,7 @@ export default function AddJobForm() {
         </div>
       </div>
 
+      {/* Submit Button */}
       <div className="flex justify-end">
         <button
           type="submit"

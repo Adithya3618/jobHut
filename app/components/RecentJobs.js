@@ -12,7 +12,8 @@ export default function RecentJobs() {
   useEffect(() => {
     async function fetchJobs() {
       try {
-        const response = await fetch('/api/recent-jobs')
+        setIsLoading(true)
+        const response = await fetch('/api/recent-jobs')  // New endpoint for recent jobs
         if (!response.ok) {
           throw new Error('Failed to fetch recent jobs')
         }

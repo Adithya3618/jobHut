@@ -25,6 +25,7 @@ export default function JobList({ currentPage, jobsPerPage }) {
         }
         const data = await response.json();
         setJobs(data.jobs || []);
+        setJobs(prevJobs => [...prevJobs].sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted)));
         setTotalJobs(data.total || 0);
       } catch (error) {
         console.error('Error fetching jobs:', error);

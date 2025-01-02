@@ -58,13 +58,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
             <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.push('/admin/settings')}
-                className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
-                title="Settings"
-              >
-                <Settings className="h-5 w-5" />
-              </button>
+              
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
