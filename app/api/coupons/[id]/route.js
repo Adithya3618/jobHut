@@ -4,14 +4,17 @@ import { ObjectId } from 'mongodb'
 
 export async function GET(request, { params }) {
   try {
-    const id = await params.id;
+    const id = params?.id ? await Promise.resolve(params.id) : null;
+    
     if (!id) {
       return NextResponse.json({ error: 'Invalid coupon ID' }, { status: 400 });
     }
 
     const client = await clientPromise
     const db = client.db('jobhut')
-    const coupon = await db.collection('coupons').findOne({ _id: new ObjectId(id) })
+    const coupon = await db.collection('coupons').findOne({ 
+      _id: new ObjectId(id) 
+    })
     
     if (!coupon) {
       return NextResponse.json({ error: 'Coupon not found' }, { status: 404 })

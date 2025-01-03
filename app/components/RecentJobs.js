@@ -13,7 +13,7 @@ export default function RecentJobs() {
     async function fetchJobs() {
       try {
         setIsLoading(true)
-        const response = await fetch('/api/recent-jobs')  // New endpoint for recent jobs
+        const response = await fetch('/api/recent-jobs')
         if (!response.ok) {
           throw new Error('Failed to fetch recent jobs')
         }
