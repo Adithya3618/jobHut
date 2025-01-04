@@ -1,9 +1,19 @@
 'use client'
 
+import { Suspense } from 'react'
 import { usePageViews } from '../hooks/usePageViews'
 
-export default function PageViewWrapper({ children }) {
+function PageViewsTracker() {
   usePageViews()
-  return children
+  return null
+}
+
+export default function PageViewWrapper({ children }) {
+  return (
+    <Suspense fallback={null}>
+      <PageViewsTracker />
+      {children}
+    </Suspense>
+  )
 }
 
