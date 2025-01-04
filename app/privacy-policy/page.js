@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import PageViewWrapper from '/components/PageViewWrapper'
+import PageViewWrapper from '../components/PageViewWrapper'
 
 export default function PrivacyPolicyPage() {
 
