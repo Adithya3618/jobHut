@@ -10,7 +10,7 @@ import Loading from '../../components/Loading'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { Briefcase, PlusCircle, Tag, Settings, LogOut } from 'lucide-react'
-import PageViewWrapper from '../components/PageViewWrapper'
+import PageViewWrapper from '../../components/PageViewWrapper'
 
 export default function AdminDashboard() {
   
