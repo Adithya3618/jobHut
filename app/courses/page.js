@@ -5,8 +5,10 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import CouponCard from '../components/CouponCard'
 import Loading from '../components/Loading'
+import { usePageViews } from '../hooks/usePageViews'
 
 export default function CoursesPage() {
+  usePageViews();
   const [coupons, setCoupons] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')

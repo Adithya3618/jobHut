@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { usePageViews } from '../hooks/usePageViews'
 
 export default function TermsOfServicePage() {
+  usePageViews();
   return (
     <div className="flex flex-col min-h-screen">
       <Header />

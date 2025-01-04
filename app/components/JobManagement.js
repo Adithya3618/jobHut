@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import EditJobForm from './EditJobForm'
 import Loading from './Loading'
+import { toast } from 'react-hot-toast'
 
 export default function JobManagement() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingJob, setEditingJob] = useState(null)
-  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function JobManagement() {
       setJobs(data.jobs.sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted)))
     } catch (error) {
       console.error('Error fetching jobs:', error)
-      setError('Failed to load jobs. Please try again later.')
+      toast.error('Failed to load jobs. Please try again later.')
     } finally {
       setLoading(false)
     }
@@ -46,12 +46,13 @@ export default function JobManagement() {
 
       if (response.ok) {
         setJobs(jobs.filter(job => job._id !== jobId))
+        toast.success('Job deleted successfully')
       } else {
         throw new Error('Failed to delete job')
       }
     } catch (error) {
       console.error('Error deleting job:', error)
-      alert('Error deleting job')
+      toast.error('Error deleting job')
     }
   }
 
@@ -73,12 +74,13 @@ export default function JobManagement() {
       if (response.ok) {
         setJobs(jobs.map(job => job._id === updatedJob._id ? updatedJob : job))
         setEditingJob(null)
+        toast.success('Job updated successfully')
       } else {
         throw new Error('Failed to update job')
       }
     } catch (error) {
       console.error('Error updating job:', error)
-      alert('Error updating job')
+      toast.error('Error updating job')
     }
   }
 
@@ -88,8 +90,6 @@ export default function JobManagement() {
   )
 
   if (loading) return <Loading />
-
-  if (error) return <div className="text-center text-red-500">{error}</div>
 
   if (editingJob) {
     return <EditJobForm job={editingJob} onSubmit={handleEditSubmit} onCancel={() => setEditingJob(null)} />

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 const TECHNICAL_FIELDS = [
   'Software Developer',
@@ -205,41 +206,19 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
               </div>
 
               <div className="col-span-6 sm:col-span-3">
-  <label htmlFor="salary" className="block text-sm font-medium text-gray-700">
-    Salary (₹)
-  </label>
-  <div className="flex flex-col space-y-2">
-    {/* Manual Input */}
-    <input
-      type="number"
-      name="salary"
-      id="salary"
-      value={editedJob.salary}
-      onChange={handleChange}
-      placeholder="Enter salary (e.g., 50000)"
-      className="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-      required
-    />
-    
-    {/* Range Slider */}
-    <div className="mt-2 flex items-center">
-      <label className="text-sm text-gray-600 pr-2">Adjust Salary Range:</label>
-      <input
-        type="range"
-        min="0"
-        max="500000"
-        step="5000"
-        value={editedJob.salary || 0}
-        onChange={(e) =>
-          setEditedJob((prev) => ({ ...prev, salary: e.target.value }))
-        }
-        className="w-full"
-      />
-      <span className="ml-3 text-gray-800">{`₹${editedJob.salary || 0}`}</span>
-    </div>
-  </div>
-</div>
-
+                <label htmlFor="salary" className="block text-sm font-medium text-gray-700">
+                  Salary
+                </label>
+                <input
+                  type="text"
+                  name="salary"
+                  id="salary"
+                  value={editedJob.salary}
+                  onChange={handleChange}
+                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                
+                />
+              </div>
 
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="jobType" className="block text-sm font-medium text-gray-700">
@@ -271,7 +250,7 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                   value={editedJob.lastDate.split('T')[0]}
                   onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  required
+            
                 />
               </div>
 

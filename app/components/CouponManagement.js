@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Loading from './Loading'
+import EditCouponForm from './EditCouponForm'
+import { toast } from 'react-hot-toast'
 
 export default function CouponManagement() {
   const [coupons, setCoupons] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [editingCoupon, setEditingCoupon] = useState(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -26,6 +29,7 @@ export default function CouponManagement() {
       setCoupons(data)
     } catch (error) {
       console.error('Error fetching coupons:', error)
+      toast.error('Failed to load coupons')
     } finally {
       setLoading(false)
     }
@@ -43,9 +47,34 @@ export default function CouponManagement() {
       })
       if (!response.ok) throw new Error('Failed to delete coupon')
       setCoupons(coupons.filter(coupon => coupon._id !== couponId))
+      toast.success('Coupon deleted successfully')
     } catch (error) {
       console.error('Error deleting coupon:', error)
-      alert('Error deleting coupon')
+      toast.error('Error deleting coupon')
+    }
+  }
+
+  const handleEdit = (coupon) => {
+    setEditingCoupon(coupon)
+  }
+
+  const handleEditSubmit = async (updatedCoupon) => {
+    try {
+      const response = await fetch(`/api/coupons/${updatedCoupon._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        },
+        body: JSON.stringify(updatedCoupon)
+      })
+      if (!response.ok) throw new Error('Failed to update coupon')
+      setCoupons(coupons.map(coupon => coupon._id === updatedCoupon._id ? updatedCoupon : coupon))
+      setEditingCoupon(null)
+      toast.success('Coupon updated successfully')
+    } catch (error) {
+      console.error('Error updating coupon:', error)
+      toast.error('Error updating coupon')
     }
   }
 
@@ -55,6 +84,10 @@ export default function CouponManagement() {
   )
 
   if (loading) return <Loading />
+
+  if (editingCoupon) {
+    return <EditCouponForm coupon={editingCoupon} onSubmit={handleEditSubmit} onCancel={() => setEditingCoupon(null)} />
+  }
 
   return (
     <div>
@@ -76,7 +109,7 @@ export default function CouponManagement() {
             <p className="text-sm text-gray-500 mt-2">Created: {new Date(coupon.createdAt).toLocaleString()}</p>
             <div className="mt-4 flex justify-end space-x-2">
               <button
-                onClick={() => router.push(`/admin/edit-coupon/${coupon._id}`)}
+                onClick={() => handleEdit(coupon)}
                 className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Edit

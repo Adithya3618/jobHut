@@ -4,8 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { usePageViews } from '../hooks/usePageViews'
 
 export default function ContactPage() {
+  usePageViews();
   const [formData, setFormData] = useState({
     name: '',
     email: '',

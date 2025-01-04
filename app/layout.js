@@ -1,10 +1,10 @@
-import './globals.css';
-import Script from 'next/script';
+import './globals.css'
+import Script from 'next/script'
+import GoogleTagManagerNoscript from './components/GoogleTagManagerNoscript'
 
 export const metadata = {
   title: 'JobHut - Find Your Dream Job',
   description: 'Job listing platform for technical and non-technical positions. Explore thousands of job opportunities with all the information you need.',
-  metadataBase: new URL('http://localhost:3000'),
   keywords: 'jobs, career, employment, job search, job listing, technical jobs, non-technical jobs',
   openGraph: {
     type: 'website',
@@ -13,7 +13,7 @@ export const metadata = {
     siteName: 'JobHut',
     images: [
       {
-        url: '/LOGO.jpg',
+        url: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
         width: 1200,
         height: 630,
         alt: 'JobHut - Find Your Dream Job',
@@ -26,47 +26,50 @@ export const metadata = {
     cardType: 'summary_large_image',
   },
   icons: {
-    icon: '/LOGO.jpg',
-    shortcut: '/LOGO.jpg',
-    apple: '/LOGO.jpg',
+    icon: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
+    shortcut: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
+    apple: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
   },
-};
+}
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        {/* Google Tag Manager */}
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-5VRB6HMK');
+          `}
+        </Script>
+        {/* End Google Tag Manager */}
+
+        {/* Google Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-KF8PF5C3XD`}
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-KF8PF5C3XD', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
+        {/* End Google Analytics */}
+      </head>
       <body>
-        <div className="min-h-screen bg-gray-50">
-          {children}
-        </div>
-        {process.env.NODE_ENV === 'production' && (
-          <>
-            <Script
-              async
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-              strategy="beforeInteractive"
-            />
-            <Script
-              strategy="afterInteractive"
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-            />
-            <Script
-              id="gtag-init"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
-                    page_path: window.location.pathname,
-                  });
-                `,
-              }}
-            />
-          </>
-        )}
+        <GoogleTagManagerNoscript />
+        {children}
       </body>
     </html>
-  );
+  )
 }
+

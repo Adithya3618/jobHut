@@ -1,10 +1,15 @@
+'use client'
+
 import { Suspense } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import CouponsList from '../components/CouponsList'
 import Loading from '../components/Loading'
+import { usePageViews } from '../hooks/usePageViews'
 
 export default function CouponsPage() {
+  usePageViews();
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />

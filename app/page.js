@@ -1,3 +1,5 @@
+'use client'
+
 import { Suspense } from 'react'
 import Link from 'next/link'
 import Header from './components/Header'
@@ -6,8 +8,11 @@ import RecentJobs from './components/RecentJobs'
 import SearchForm from './components/SearchForm'
 import JobCategories from './components/JobCategories'
 import Loading from './components/Loading'
+import { usePageViews } from './hooks/usePageViews'
 
 export default function Home() {
+  usePageViews()
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />

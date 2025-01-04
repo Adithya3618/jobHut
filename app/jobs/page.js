@@ -1,11 +1,16 @@
+'use client'
+
 import { Suspense } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import JobList from '../components/JobList';
 import AdvancedSearch from '../components/AdvancedSearch';
 import Loading from '../components/Loading';
+import { usePageViews } from '../hooks/usePageViews';
 
 export default function Jobs() {
+  usePageViews();
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
