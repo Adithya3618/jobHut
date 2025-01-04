@@ -5,10 +5,10 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import CouponCard from '../components/CouponCard'
 import Loading from '../components/Loading'
-import { usePageViews } from '../hooks/usePageViews'
+import PageViewWrapper from '../components/PageViewWrapper'
 
 export default function CoursesPage() {
-  usePageViews();
+
   const [coupons, setCoupons] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -36,6 +36,7 @@ export default function CoursesPage() {
   )
 
   return (
+    <PageViewWrapper>
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
@@ -61,6 +62,7 @@ export default function CoursesPage() {
       </main>
       <Footer />
     </div>
+    </PageViewWrapper>
   )
 }
 

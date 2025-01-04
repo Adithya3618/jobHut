@@ -5,12 +5,13 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import CouponsList from '../components/CouponsList'
 import Loading from '../components/Loading'
-import { usePageViews } from '../hooks/usePageViews'
+import PageViewWrapper from '../components/PageViewWrapper'
 
 export default function CouponsPage() {
-  usePageViews();
+
 
   return (
+    <PageViewWrapper>
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
@@ -21,6 +22,7 @@ export default function CouponsPage() {
       </main>
       <Footer />
     </div>
+    </PageViewWrapper>
   )
 }
 
