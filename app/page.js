@@ -8,7 +8,7 @@ import RecentJobs from './components/RecentJobs'
 import SearchForm from './components/SearchForm'
 import JobCategories from './components/JobCategories'
 import Loading from './components/Loading'
-import PageViewWrapper from '../../components/PageViewWrapper'
+import PageViewWrapper from './components/PageViewWrapper'
 
 export default function Home() {
 
