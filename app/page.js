@@ -8,12 +8,13 @@ import RecentJobs from './components/RecentJobs'
 import SearchForm from './components/SearchForm'
 import JobCategories from './components/JobCategories'
 import Loading from './components/Loading'
-import { usePageViews } from './hooks/usePageViews'
+import PageViewWrapper from '../../components/PageViewWrapper'
 
 export default function Home() {
-  usePageViews()
+
 
   return (
+    <PageViewWrapper>
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-8">
@@ -42,6 +43,7 @@ export default function Home() {
       </main>
       <Footer />
     </div>
+    </PageViewWrapper>
   )
 }
 
