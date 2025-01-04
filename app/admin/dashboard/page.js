@@ -10,10 +10,8 @@ import Loading from '../../components/Loading'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { Briefcase, PlusCircle, Tag, Settings, LogOut } from 'lucide-react'
-import { usePageViews } from '../../hooks/usePageViews'
 
 export default function AdminDashboard() {
-  usePageViews();
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [activeTab, setActiveTab] = useState('jobs')
   const router = useRouter()
