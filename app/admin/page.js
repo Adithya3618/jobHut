@@ -3,18 +3,20 @@
 import { Suspense } from 'react'
 import AdminLogin from '../components/AdminLogin'
 import Loading from '../components/Loading'
-import { usePageViews } from '../hooks/usePageViews'
+import PageViewWrapper from '../components/PageViewWrapper'
 
 export default function Admin() {
-  usePageViews();
+ 
 
   return (
+    <PageViewWrapper>
     <div>
       <h1>Admin Login</h1>
       <Suspense fallback={<Loading />}>
         <AdminLogin />
       </Suspense>
     </div>
+    </PageViewWrapper>
   )
 }
 
