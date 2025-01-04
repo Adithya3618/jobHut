@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import { usePageViews } from '../hooks/usePageViews'
+import PageViewWrapper from '../components/PageViewWrapper'
 
 export default function ContactPage() {
-  usePageViews();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,6 +22,7 @@ export default function ContactPage() {
   };
 
   return (
+    <PageViewWrapper>
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="bg-gradient-to-b from-gray-50 to-white py-16">
@@ -142,5 +143,6 @@ export default function ContactPage() {
       </div>
       <Footer />
     </div>
+    </PageViewWrapper>
   );
 }
