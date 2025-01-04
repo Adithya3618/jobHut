@@ -26,7 +26,7 @@ export default function LandingPage() {
             Connect with top companies and find opportunities that match your skills and aspirations.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <section className="mb-12 text-center">
+            <section className="mb-2 text-center">
               <SearchForm />
             </section>
 

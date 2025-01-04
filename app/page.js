@@ -14,31 +14,31 @@ export default function Home() {
 
   return (
     <PageViewWrapper>
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        
-        <Suspense fallback={<Loading />}>
-          <section className="mb-12">
-            <JobCategories />
-          </section>
-        </Suspense>
-        <Suspense fallback={<Loading />}>
-          <section>
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
-            Recent Job Listings
-          </h2>
-            <RecentJobs />
-            <div className="text-center mt-8">
-              <Link href="/jobs" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300">
-                View All Jobs
-              </Link>
-            </div>
-          </section>
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <Header />
+        <main className="flex-grow container mx-auto px-4 py-8">
+
+          <Suspense fallback={<Loading />}>
+            <section className="mb-12">
+              <JobCategories />
+            </section>
+          </Suspense>
+          <Suspense fallback={<Loading />}>
+            <section>
+              <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+                Recent Job Listings
+              </h2>
+              <RecentJobs />
+              <div className="text-center mt-10">
+                <Link href="/jobs" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+                  View All Jobs
+                </Link>
+              </div>
+            </section>
+          </Suspense>
+        </main>
+        <Footer />
+      </div>
     </PageViewWrapper>
   )
 }
