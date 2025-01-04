@@ -10,8 +10,10 @@ import Loading from '../../components/Loading'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { Briefcase, PlusCircle, Tag, Settings, LogOut } from 'lucide-react'
+import { usePageViews } from '../../hooks/usePageViews'
 
 export default function AdminDashboard() {
+  usePageViews()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [activeTab, setActiveTab] = useState('jobs')
   const router = useRouter()
@@ -52,13 +54,12 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      
+
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
             <div className="flex items-center space-x-4">
-              
               <button
                 onClick={handleLogout}
                 className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
@@ -68,7 +69,7 @@ export default function AdminDashboard() {
               </button>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-lg mb-8">
             <div className="border-b border-gray-200">
               <nav className="flex space-x-1 p-1">
@@ -78,14 +79,11 @@ export default function AdminDashboard() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`
-                        flex items-center space-x-2 px-4 py-3 rounded-lg font-medium text-sm
-                        ${
-                          activeTab === tab.id
-                            ? 'bg-blue-50 text-blue-600'
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                        } transition-all duration-200
-                      `}
+                      className={`flex items-center space-x-2 px-4 py-3 rounded-lg font-medium text-sm ${
+                        activeTab === tab.id
+                          ? 'bg-blue-50 text-blue-600'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      } transition-all duration-200`}
                     >
                       <Icon className="h-4 w-4" />
                       <span>{tab.label}</span>
@@ -97,11 +95,13 @@ export default function AdminDashboard() {
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <Suspense fallback={
-              <div className="flex justify-center items-center h-64">
-                <Loading />
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="flex justify-center items-center h-64">
+                  <Loading />
+                </div>
+              }
+            >
               {activeTab === 'jobs' && <JobManagement />}
               {activeTab === 'addJob' && <AddJobForm />}
               {activeTab === 'coupons' && <CouponManagement />}
@@ -110,7 +110,7 @@ export default function AdminDashboard() {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   )
