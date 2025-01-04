@@ -39,11 +39,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: Users, value: "100,000+", label: "Job Seekers" },
-              { icon: Building2, value: "10,000+", label: "Companies" },
-              { icon: Briefcase, value: "50,000+", label: "Active Jobs" }
+              { icon: Users,  label: "Job Seekers" },
+              { icon: Building2, label: "Companies" },
+              { icon: Briefcase,  label: "Active Jobs" }
             ].map((stat, index) => (
-              <div key={index} className="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-shadow duration-200">
+              <div key={index} className="bg-white rounded-2xl p-8 text-center shadow-xl hover:shadow-xl transition-shadow duration-200">
                 <stat.icon className="w-12 h-12 mx-auto mb-4 text-blue-600" />
                 <p className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</p>
                 <p className="text-gray-600 text-lg">{stat.label}</p>
@@ -55,42 +55,46 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <div id="features" className="py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
-            Why Choose <span className="text-blue-600">JobHut</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Target,
-                title: "Smart Matching",
-                description: "AI-powered job matching based on your skills and preferences"
-              },
-              {
-                icon: CheckCircle,
-                title: "Easy Apply",
-                description: "One-click application process with your saved profile"
-              },
-              {
-                icon: Globe,
-                title: "Remote First",
-                description: "Access opportunities from anywhere in the world"
-              },
-              {
-                icon: Users,
-                title: "Direct Connect",
-                description: "Connect directly with hiring managers"
-              }
-            ].map((feature, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200">
-                <feature.icon className="w-12 h-12 text-blue-600 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+  <div className="max-w-7xl mx-auto px-4">
+    <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+      Why Choose <span className="text-blue-600">JobHut</span>
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[
+        {
+          icon: Target,
+          title: "Smart Matching",
+          description: "AI-powered job matching based on your skills and preferences",
+        },
+        {
+          icon: CheckCircle,
+          title: "Easy Apply",
+          description: "One-click application process with your saved profile",
+        },
+        {
+          icon: Globe,
+          title: "Remote First",
+          description: "Access opportunities from anywhere in the world",
+        },
+        {
+          icon: Users,
+          title: "Direct Connect",
+          description: "Connect directly with hiring managers",
+        },
+      ].map((feature, index) => (
+        <div
+          key={index}
+          className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-200 flex flex-col items-center text-center"
+        >
+          <feature.icon className="w-12 h-12 text-blue-600 mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+          <p className="text-gray-600">{feature.description}</p>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
 
 
