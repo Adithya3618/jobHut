@@ -9,8 +9,10 @@ import CouponManagement from '../../components/CouponManagement'
 import Loading from '../../components/Loading'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
-import { Briefcase, PlusCircle, Tag, Settings, LogOut } from 'lucide-react'
+import { Briefcase, PlusCircle, Tag, LogOut } from 'lucide-react'
 import { usePageViews } from '../../hooks/usePageViews'
+
+export const dynamic = 'force-dynamic'
 
 export default function AdminDashboard() {
   usePageViews()
