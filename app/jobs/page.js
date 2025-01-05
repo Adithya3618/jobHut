@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Job Listings | Find Your Next Career Opportunity',
+  description: 'Browse our extensive list of job openings across various industries. Find and apply to your dream job today with JobHut.',
+};
+
 import { Suspense } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
