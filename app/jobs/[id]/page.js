@@ -15,13 +15,13 @@ export default function JobDetails({ params }) {
         <Header />
         <Suspense fallback={<Loading />}>
           <main className="flex-grow container mx-auto px-4 py-8">
-            {/* AdSense at the top of the job details */}
-            <AdSense adSlot="5678901234" style={{ marginBottom: '2rem' }} />
+            {/* AdSense at the top of the job details
+            <AdSense adSlot="5678901234" style={{ marginBottom: '2rem' }} /> */}
 
             <JobDetailsContent id={id} />
 
-            {/* AdSense at the bottom of the job details */}
-            <AdSense adSlot="6789012345" style={{ marginTop: '2rem' }} />
+            {/* AdSense at the bottom of the job details
+            <AdSense adSlot="6789012345" style={{ marginTop: '2rem' }} /> */}
           </main>
         </Suspense>
         <Footer />

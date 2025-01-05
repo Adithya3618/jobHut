@@ -20,8 +20,8 @@ export default function CouponsPage() {
         <Suspense fallback={<Loading />}>
           <CouponsList />
         </Suspense>
-        {/* AdSense at the bottom of the courses page */}
-        <AdSense adSlot="8901234567" style={{ marginTop: '2rem' }} />
+        {/* AdSense at the bottom of the courses page
+        <AdSense adSlot="8901234567" style={{ marginTop: '2rem' }} /> */}
       </main>
       <Footer />
     </div>

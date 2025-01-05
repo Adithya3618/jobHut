@@ -72,9 +72,9 @@ export default function Jobs() {
               <Suspense fallback={<Loading />}>
                 <AdvancedSearch />
               </Suspense>
-              {/* AdSense at the bottom of the page */}
+              {/* AdSense at the bottom of the page
           <AdSense adSlot="4567890123" style={{ marginTop: '2rem' }} />
-       
+        */}
             </aside>
             
             {/* Right side: Job List */}

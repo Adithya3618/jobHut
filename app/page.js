@@ -29,8 +29,8 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
                 Recent Job Listings
               </h2>
-              {/* AdSense after search form */}
-              <AdSense adSlot="1234567890" style={{ marginBottom: '2rem' }} />
+              {/* AdSense after search form
+              <AdSense adSlot="1234567890" style={{ marginBottom: '2rem' }} /> */}
               <RecentJobs />
               
               <div className="text-center mt-10">

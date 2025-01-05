@@ -142,7 +142,7 @@ export default function JobDetailsContent({ id }) {
                 { label: 'Salary', value: job.salary, icon: <BadgeDollarSign size={20} /> },
                 { label: 'Expiration Date', value: lastDate, icon: <Clock size={20} /> },
                 { label: 'Experience', value: job.experience, icon: <Users size={20} /> },
-                { label: 'Field', value: job.category, icon: <User2 size={20} /> },
+                { label: 'Field', value: job.subCategory, icon: <User2 size={20} /> },
                 { label: 'Qualification', value: job.qualification, icon: <GraduationCap size={20} /> },
               ].map((item, idx) => (
                 <li key={idx} className="flex items-center gap-4">
