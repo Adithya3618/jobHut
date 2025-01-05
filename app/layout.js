@@ -5,44 +5,107 @@ import GoogleTagManagerNoscript from './components/GoogleTagManagerNoscript';
 export const metadata = {
   metadataBase: new URL('https://jobhut.com'),
   title: {
-    default: 'JobHut - Find Your Dream Job',
-    template: '%s | JobHut'
+    default: 'JobHut - Find Your Dream Job | Top Job Search Platform',
+    template: '%s | JobHut - Professional Job Search Platform'
   },
-  description: 'JobHut: Your premier job listing platform for technical and non-technical positions. Explore thousands of career opportunities with comprehensive information to guide your job search.',
-  keywords: ['jobs', 'career', 'employment', 'job search', 'job listing', 'technical jobs', 'non-technical jobs'],
-  authors: [{ name: 'JobHut' }],
+  description: 'JobHut: Your comprehensive job search platform featuring thousands of verified technical and non-technical positions. Access detailed job descriptions, salary insights, and company information. Find and apply to your ideal career opportunity today.',
+  keywords: [
+    'jobs', 'career opportunities', 'employment', 'job search', 'job listing',
+    'technical jobs', 'non-technical jobs', 'remote jobs', 'full-time jobs',
+    'part-time jobs', 'entry level jobs', 'senior positions', 'IT jobs',
+    'software jobs', 'engineering jobs', 'professional careers', 'job portal',
+    'career development', 'job application', 'hiring platform'
+  ],
+  authors: [{ name: 'JobHut', url: 'https://jobhut.com' }],
+  generator: 'Next.js',
+  applicationName: 'JobHut',
+  referrer: 'origin-when-cross-origin',
+  creator: 'JobHut Team',
+  publisher: 'JobHut',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  category: 'job portal',
   openGraph: {
     type: 'website',
     locale: 'en_IE',
     url: 'https://jobhut.com/',
     siteName: 'JobHut',
+    title: 'JobHut - Your Gateway to Professional Success',
+    description: 'Discover thousands of job opportunities across various industries. JobHut connects talented professionals with leading employers worldwide.',
     images: [
       {
         url: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
         width: 1200,
         height: 630,
-        alt: 'JobHut - Find Your Dream Job',
+        alt: 'JobHut - Professional Job Search Platform',
+        type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@jobhut',
+    creator: '@jobhut',
+    title: 'JobHut - Find Your Dream Job',
+    description: 'Your premier destination for professional job opportunities. Browse, apply, and advance your career with JobHut.',
+    images: ['https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true'],
   },
   icons: {
-    icon: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
+    icon: [
+      { url: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true', sizes: '32x32', type: 'image/jpg' },
+      { url: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true', sizes: '192x192', type: 'image/jpg' }
+    ],
     shortcut: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
     apple: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: 'https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true'
+    },
   },
   canonical: 'https://jobhut.com',
+  alternates: {
+    canonical: 'https://jobhut.com',
+    languages: {
+      'en-US': 'https://jobhut.com/en-US',
+    },
+  },
+  verification: {
+    google: 'google-site-verification=your_verification_code',
+    other: {
+      me: ['saibadarinadh@jobhut.com']
+    }
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
         <meta charSet="UTF-8" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-TileColor" content="#ffffff" />
+        <meta name="msapplication-config" content="/browserconfig.xml" />
+        <meta name="google-adsense-account" content="ca-pub-2508731961979474" />
 
         {/* Google Tag Manager */}
         <Script id="google-tag-manager" strategy="afterInteractive">
@@ -54,7 +117,6 @@ export default function RootLayout({ children }) {
             })(window,document,'script','dataLayer','GTM-5VRB6HMK');
           `}
         </Script>
-        {/* End Google Tag Manager */}
 
         {/* Google Analytics */}
         <Script
@@ -71,10 +133,16 @@ export default function RootLayout({ children }) {
             });
           `}
         </Script>
-        {/* End Google Analytics */}
+
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2508731961979474"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </head>
       <body>
-        {/* Google Tag Manager (No Script) */}
         <GoogleTagManagerNoscript />
         {children}
       </body>

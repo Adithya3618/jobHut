@@ -6,6 +6,7 @@ import Footer from '../components/Footer'
 import CouponsList from '../components/CouponsList'
 import Loading from '../components/Loading'
 import PageViewWrapper from '../components/PageViewWrapper'
+import AdSense from '../components/AdSense'
 
 export default function CouponsPage() {
 
@@ -19,6 +20,8 @@ export default function CouponsPage() {
         <Suspense fallback={<Loading />}>
           <CouponsList />
         </Suspense>
+        {/* AdSense at the bottom of the courses page */}
+        <AdSense adSlot="8901234567" style={{ marginTop: '2rem' }} />
       </main>
       <Footer />
     </div>

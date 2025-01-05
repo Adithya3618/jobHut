@@ -2,22 +2,22 @@
 
 import { useEffect } from 'react'
 
-export default function AdSense(props) {
+export default function AdSense({ adSlot, adFormat = 'auto', style = {} }) {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({})
     } catch (err) {
-      console.error(err)
+      console.error('AdSense error:', err)
     }
   }, [])
 
   return (
     <ins
       className="adsbygoogle"
-      style={{ display: 'block' }}
-      data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}
-      data-ad-slot={props.adSlot}
-      data-ad-format="auto"
+      style={{ display: 'block', ...style }}
+      data-ad-client="ca-pub-2508731961979474"
+      data-ad-slot={adSlot}
+      data-ad-format={adFormat}
       data-full-width-responsive="true"
     />
   )
