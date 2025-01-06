@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Loading from './Loading';
-
+import PageViewWrapper from '../components/PageViewWrapper';
 export default function CouponDetailsContent({ id }) {
   const [coupon, setCoupon] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,6 +51,7 @@ export default function CouponDetailsContent({ id }) {
   if (!coupon) return <div className="text-center">Coupon not found</div>;
 
   return (
+    <PageViewWrapper>
     <main className="flex-grow container mx-auto px-4 py-8">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-4">{coupon.name}</h1>
@@ -78,6 +79,7 @@ export default function CouponDetailsContent({ id }) {
         )}
       </div>
     </main>
+    </PageViewWrapper>
   );
 }
 

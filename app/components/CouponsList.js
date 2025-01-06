@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import CouponCard from './CouponCard'
 import Loading from './Loading'
+import PageViewWrapper from '../components/PageViewWrapper';
 
 export default function CouponsList() {
   const [coupons, setCoupons] = useState([])
@@ -37,30 +38,32 @@ export default function CouponsList() {
   )
 
   if (loading) return <Loading />
-  
+
   if (error) return <div className="text-center text-red-500">{error}</div>
 
   return (
-    <div>
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search by name or coupon ID"
-          className="w-full px-4 py-2 border rounded-md"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      {filteredCoupons.length === 0 ? (
-        <div className="text-center text-gray-500">No coupons found</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCoupons.map((coupon) => (
-            <CouponCard key={coupon._id} coupon={coupon} />
-          ))}
+    <PageViewWrapper>
+      <div>
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search by name or coupon ID"
+            className="w-full px-4 py-2 border rounded-md"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-      )}
-    </div>
+        {filteredCoupons.length === 0 ? (
+          <div className="text-center text-gray-500">No coupons found</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredCoupons.map((coupon) => (
+              <CouponCard key={coupon._id} coupon={coupon} />
+            ))}
+          </div>
+        )}
+      </div>
+    </PageViewWrapper>
   )
 }
 

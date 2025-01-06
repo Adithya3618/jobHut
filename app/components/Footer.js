@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FaWhatsapp } from 'react-icons/fa';
+import { FaTelegram } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -19,6 +20,16 @@ export default function Footer() {
               <FaWhatsapp className="text-xl" />
               <span>Join WhatsApp Community</span>
             </Link>
+            <Link 
+              href="https://t.me/+o14WQBO8VuMxOTM1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4"
+            >
+              <FaTelegram className="text-xl" />
+              <span>Join Telegram Community</span>
+            </Link>
+            
           </div>
 
           {/* Quick Links */}
@@ -35,7 +46,7 @@ export default function Footer() {
                 <Link href="/contact" className="hover:text-white transition-colors duration-200">Contact Us</Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
+                <Link href="/faq" className="hover:text-white transition-colors duration-200">Frequently Asked Questions</Link>
               </li>
             </ul>
           </div>
@@ -51,7 +62,13 @@ export default function Footer() {
                 <Link href="/jobs?category=non-technical" className="hover:text-white transition-colors duration-200">Non-Technical Jobs</Link>
               </li>
               <li>
-                <Link href="/jobs?category=internship" className="hover:text-white transition-colors duration-200">Internships</Link>
+                <Link href="/jobs?jobType=intern" className="hover:text-white transition-colors duration-200">Internships</Link>
+              </li>
+              <li>
+                <Link href="/jobs?jobType=fulltime" className="hover:text-white transition-colors duration-200">Full Time</Link>
+              </li>
+              <li>
+                <Link href="/jobs?experience=pursuing" className="hover:text-white transition-colors duration-200">Pursuing</Link>
               </li>
             </ul>
           </div>
