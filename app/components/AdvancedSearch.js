@@ -156,7 +156,7 @@ export default function SearchForm() {
         </div>
 
         {/* Search Button */}
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-center ">
           <button
             type="submit"
             className="bg-blue-500 text-white px-8 py-3.5 rounded-xl hover:bg-blue-600 transition-all duration-200 flex items-center space-x-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
