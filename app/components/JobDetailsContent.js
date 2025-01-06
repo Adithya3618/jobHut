@@ -5,7 +5,7 @@ import Image from 'next/image';
 import JobCard from './JobCard';
 import ApplyButton from './ApplyButton';
 import Loading from './Loading';
-import { Calendar, MapPin, Building2, Cpu, BadgeDollarSign, Clock, Users, User2, GraduationCap } from 'lucide-react';
+import { Calendar, MapPin, Building2, Cpu, BadgeDollarSign, Clock, Users, User2, GraduationCap, Share2 } from 'lucide-react';
 
 export default function JobDetailsContent({ id }) {
   const [job, setJob] = useState(null);
@@ -43,6 +43,27 @@ export default function JobDetailsContent({ id }) {
 
     fetchData();
   }, [id]);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: job.title,
+          text: `Check out this job: ${job.title} at ${job.companyName}`,
+          url: url
+        });
+      } catch (err) {
+        console.log('Share failed:', err);
+        await navigator.clipboard.writeText(url);
+        alert('URL copied to clipboard!');
+      }
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert('URL copied to clipboard!');
+    }
+  };
 
   if (loading) {
     return <Loading />;
@@ -156,6 +177,16 @@ export default function JobDetailsContent({ id }) {
                 </li>
               ))}
             </ul>
+            {/* Replace the existing share button div with this */}
+<div className="mt-4 border-t pt-4">
+  <button 
+    onClick={handleShare}
+    className="w-full flex items-center justify-center gap-3 bg-blue-50 hover:bg-blue-100 text-blue-600 py-3 px-4 rounded-lg transition-all duration-200 group"
+  >
+    <Share2 size={18} className="group-hover:rotate-12 transition-transform duration-200" />
+    <span className="font-medium">Share Position</span>
+  </button>
+</div>
           </div>
         </div>
       </div>
@@ -186,4 +217,3 @@ export default function JobDetailsContent({ id }) {
     </main>
   );
 }
-
