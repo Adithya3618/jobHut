@@ -63,7 +63,12 @@ export default function AddJobForm() {
       experience: job.experience === 'other' ? job.otherExperience : job.experience,
       subCategory: job.subCategory === 'Other' ? job.otherSubCategory : job.subCategory,
       datePosted: new Date().toISOString(),  // Set the current date and time
-      expirationDate: new Date(job.lastDate).toISOString()
+      expirationDate: job.lastDate ? new Date(job.lastDate).toISOString() : null
+    }
+
+    // Validate the expirationDate
+    if (jobData.expirationDate && isNaN(Date.parse(jobData.expirationDate))) {
+      throw new Error('Invalid expiration date');
     }
 
     try {
@@ -313,7 +318,7 @@ export default function AddJobForm() {
                   value={job.salary}
                   onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  
+                  required
                 />
               </div>
 

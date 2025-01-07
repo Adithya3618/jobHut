@@ -2,34 +2,46 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Search, Edit, Trash2 } from 'lucide-react'
 import Loading from './Loading'
 import EditCouponForm from './EditCouponForm'
 import { toast } from 'react-hot-toast'
+import { Search, Tag, Calendar, Info, Pencil, Trash2, ChevronLeft, ChevronRight, Ticket } from 'lucide-react'
 
 export default function CouponManagement() {
   const [coupons, setCoupons] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [editingCoupon, setEditingCoupon] = useState(null)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [deletingCouponId, setDeletingCouponId] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalCoupons, setTotalCoupons] = useState(0)
+  const couponsPerPage = 20
   const router = useRouter()
 
   useEffect(() => {
     fetchCoupons()
   }, [])
 
+  useEffect(() => {
+    fetchCoupons()
+  }, [currentPage, searchTerm])
+
   const fetchCoupons = async () => {
     try {
-      const response = await fetch('/api/coupons', {
+      setLoading(true)
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: couponsPerPage.toString(),
+        search: searchTerm
+      })
+      const response = await fetch(`/api/coupons?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
       })
       if (!response.ok) throw new Error('Failed to fetch coupons')
       const data = await response.json()
-      setCoupons(data)
+      setCoupons(data.coupons)
+      setTotalCoupons(data.total)
     } catch (error) {
       console.error('Error fetching coupons:', error)
       toast.error('Failed to load coupons')
@@ -39,6 +51,8 @@ export default function CouponManagement() {
   }
 
   const handleDelete = async (couponId) => {
+    if (!confirm('Are you sure you want to delete this coupon?')) return
+
     try {
       const response = await fetch(`/api/coupons/${couponId}`, {
         method: 'DELETE',
@@ -52,15 +66,10 @@ export default function CouponManagement() {
     } catch (error) {
       console.error('Error deleting coupon:', error)
       toast.error('Error deleting coupon')
-    } finally {
-      setShowDeleteDialog(false)
-      setDeletingCouponId(null)
     }
   }
 
-  const handleEdit = (coupon) => {
-    setEditingCoupon(coupon)
-  }
+  const handleEdit = (coupon) => setEditingCoupon(coupon)
 
   const handleEditSubmit = async (updatedCoupon) => {
     try {
@@ -88,101 +97,116 @@ export default function CouponManagement() {
   )
 
   if (loading) return <Loading />
-
-  if (editingCoupon) {
-    return <EditCouponForm coupon={editingCoupon} onSubmit={handleEditSubmit} onCancel={() => setEditingCoupon(null)} />
-  }
+  if (editingCoupon) return <EditCouponForm coupon={editingCoupon} onSubmit={handleEditSubmit} onCancel={() => setEditingCoupon(null)} />
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="bg-white rounded-lg shadow-sm mb-8">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Coupon Management</h1>
-              <p className="mt-2 text-sm text-gray-600">
-                Manage your discount coupons and promotional offers
-              </p>
-            </div>
-            
-          </div>
-        </div>
-        <div className="p-6">
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Search Bar */}
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <form onSubmit={(e) => { e.preventDefault(); setCurrentPage(1); fetchCoupons() }} className="relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
               placeholder="Search coupons by name or ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        </form>
+      </div>
+
+      {/* Coupons Grid */}
+      <div className="space-y-6">
+        {filteredCoupons.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <Ticket className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-4 text-lg font-medium text-gray-900">No coupons available</h3>
+            <p className="mt-2 text-sm text-gray-500">Try adjusting your search terms or clear the filter</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredCoupons.map(coupon => (
-              <div key={coupon._id} className="bg-white rounded-lg border border-gray-200 transition-all duration-200 hover:shadow-lg">
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-900">{coupon.name}</h3>
-                      <p className="text-sm text-gray-500">ID: {coupon.couponId}</p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEdit(coupon)}
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setDeletingCouponId(coupon._id)
-                          setShowDeleteDialog(true)
-                        }}
-                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+              <div
+                key={coupon._id}
+                className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-200 h-64 flex flex-col"
+              >
+                {/* Card Header */}
+                <div className="p-6 flex-1">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Tag className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                    <h3 className="text-lg font-semibold text-gray-900 truncate">
+                      {coupon.name}
+                    </h3>
                   </div>
-                  <p className="text-gray-600 text-sm mb-3">{coupon.description}</p>
-                  <div className="text-xs text-gray-400">
-                    Created: {new Date(coupon.createdAt).toLocaleString()}
+                  
+                  <div className="flex items-center text-sm text-gray-500 mb-2">
+                    <Info className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">ID: {coupon.couponId}</span>
+                  </div>
+                  
+                  <div className="flex items-center text-sm text-gray-500 mb-3">
+                    <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">
+                      {new Date(coupon.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-600 text-sm line-clamp-2">
+                    {coupon.description}
+                  </p>
+                </div>
+
+                {/* Card Footer */}
+                <div className="p-4 border-t bg-gray-50 rounded-b-lg">
+                  <div className="flex justify-end space-x-3">
+                    <button
+                      onClick={() => handleEdit(coupon)}
+                      className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(coupon._id)}
+                      className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        )}
       </div>
 
-      {showDeleteDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Are you sure?</h3>
-            <p className="text-sm text-gray-600 mb-6">
-              This action cannot be undone. This will permanently delete the coupon.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowDeleteDialog(false)
-                  setDeletingCouponId(null)
-                }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(deletingCouponId)}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+      {/* Pagination */}
+      <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white rounded-lg shadow-sm p-4">
+        <p className="text-sm text-gray-700">
+          Showing {Math.min((currentPage - 1) * couponsPerPage + 1, totalCoupons)} - {Math.min(currentPage * couponsPerPage, totalCoupons)} of {totalCoupons} coupons
+        </p>
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Previous
+          </button>
+          <button
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            disabled={currentPage * couponsPerPage >= totalCoupons}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            Next
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </button>
         </div>
-      )}
+      </div>
     </div>
   )
 }

@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Tag, Clock, ArrowRight, AlertCircle } from 'lucide-react';
 import Loading from './Loading';
 import PageViewWrapper from '../components/PageViewWrapper';
+
 export default function CouponDetailsContent({ id }) {
   const [coupon, setCoupon] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,39 +49,87 @@ export default function CouponDetailsContent({ id }) {
   };
 
   if (loading) return <Loading />;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
-  if (!coupon) return <div className="text-center">Coupon not found</div>;
+  if (error) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center p-8 bg-red-50 rounded-xl border border-red-100 max-w-md">
+        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+        <p className="text-red-600 font-medium">{error}</p>
+      </div>
+    </div>
+  );
+  if (!coupon) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center p-8 bg-gray-50 rounded-xl border border-gray-100 max-w-md">
+        <Tag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <p className="text-gray-600 font-medium">Coupon not found</p>
+      </div>
+    </div>
+  );
 
   return (
     <PageViewWrapper>
-    <main className="flex-grow container mx-auto px-4 py-8">
-      <div className="bg-white shadow-md rounded-lg p-8 max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-4">{coupon.name}</h1>
-        <p className="text-gray-600 mb-4">Coupon ID: {coupon.couponId}</p>
-        <div className="bg-gray-50 p-4 rounded-lg mb-6">
-          <p className="text-gray-800 whitespace-pre-line">{coupon.description}</p>
-        </div>
-        {redirecting ? (
-          <div className="text-center">
-            <p className="text-xl mb-2">Redirecting in {countdown} seconds...</p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000"
-                style={{ width: `${((5 - countdown) / 5) * 100}%` }}
-              ></div>
+      <main className="flex-grow container mx-auto px-4 py-12">
+        <div className="bg-gradient-to-br from-white to-gray-50 shadow-xl rounded-2xl max-w-2xl mx-auto overflow-hidden border border-gray-100">
+          {/* Header Section */}
+          <div className="p-8 border-b border-gray-100">
+            <div className="space-y-4">
+              <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                {coupon.name}
+              </h1>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl border border-blue-100">
+                  <Tag className="w-4 h-4 text-blue-500" />
+                  <span className="text-blue-700 font-medium">
+                    {coupon.couponId}
+                  </span>
+                </div>
+                {coupon.validUntil && (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                    <Clock className="w-4 h-4 text-gray-500" />
+                    <span className="text-gray-700 font-medium">
+                      Valid until {new Date(coupon.validUntil).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        ) : (
-          <button
-            onClick={handleApply}
-            className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
-          >
-            Apply Coupon
-          </button>
-        )}
-      </div>
-    </main>
+
+          {/* Description Section */}
+          <div className="p-8 space-y-6">
+            <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
+              <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+                {coupon.description}
+              </p>
+            </div>
+
+            {/* Action Section */}
+            <div className="space-y-4">
+              {redirecting ? (
+                <div className="space-y-4 p-6 bg-blue-50 rounded-xl border border-blue-100">
+                  <p className="text-xl text-blue-800 font-medium text-center">
+                    Redirecting in {countdown} seconds...
+                  </p>
+                  <div className="w-full bg-blue-100 rounded-full h-3">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 shadow-lg"
+                      style={{ width: `${((5 - countdown) / 5) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={handleApply}
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2 group"
+                >
+                  Apply Coupon
+                  <ArrowRight className="w-5 h-5 transform transition-transform group-hover:translate-x-1" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
     </PageViewWrapper>
   );
 }
-

@@ -2,32 +2,41 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Search, Plus, Edit2, Trash2, MapPin, Briefcase, Clock, Award } from 'lucide-react'
 import EditJobForm from './EditJobForm'
 import Loading from './Loading'
 import { toast } from 'react-hot-toast'
+import { Search, Briefcase, MapPin, Building2, Clock, Award, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function JobManagement() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [editingJob, setEditingJob] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [deletingJobId, setDeletingJobId] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalJobs, setTotalJobs] = useState(0)
+  const jobsPerPage = 20
 
   useEffect(() => {
     fetchJobs()
   }, [])
 
+  useEffect(() => {
+    fetchJobs()
+  }, [currentPage, searchTerm])
+
   const fetchJobs = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/jobs')
-      if (!response.ok) {
-        throw new Error('Failed to fetch jobs')
-      }
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: jobsPerPage.toString(),
+        search: searchTerm
+      })
+      const response = await fetch(`/api/jobs?${queryParams}`)
+      if (!response.ok) throw new Error('Failed to fetch jobs')
       const data = await response.json()
-      setJobs(data.jobs.sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted)))
+      setJobs(data.jobs)
+      setTotalJobs(data.total)
     } catch (error) {
       console.error('Error fetching jobs:', error)
       toast.error('Failed to load jobs. Please try again later.')
@@ -37,6 +46,8 @@ export default function JobManagement() {
   }
 
   const handleDelete = async (jobId) => {
+    if (!confirm('Are you sure you want to delete this job?')) return
+
     try {
       const response = await fetch(`/api/jobs/${jobId}`, {
         method: 'DELETE',
@@ -54,15 +65,10 @@ export default function JobManagement() {
     } catch (error) {
       console.error('Error deleting job:', error)
       toast.error('Error deleting job')
-    } finally {
-      setShowDeleteDialog(false)
-      setDeletingJobId(null)
     }
   }
 
-  const handleEdit = (job) => {
-    setEditingJob(job)
-  }
+  const handleEdit = (job) => setEditingJob(job)
 
   const handleEditSubmit = async (updatedJob) => {
     try {
@@ -94,134 +100,120 @@ export default function JobManagement() {
   )
 
   if (loading) return <Loading />
-
-  if (editingJob) {
-    return <EditJobForm job={editingJob} onSubmit={handleEditSubmit} onCancel={() => setEditingJob(null)} />
-  }
+  if (editingJob) return <EditJobForm job={editingJob} onSubmit={handleEditSubmit} onCancel={() => setEditingJob(null)} />
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="bg-white rounded-lg shadow-sm mb-8">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Job Management</h1>
-              <p className="mt-2 text-sm text-gray-600">
-                Manage and track all job postings
-              </p>
-            </div>
-            
-          </div>
-        </div>
-        
-        <div className="p-6">
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <form onSubmit={(e) => { e.preventDefault(); setCurrentPage(1); fetchJobs() }} className="relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
               type="text"
-              placeholder="Search jobs by title or company..."
+              placeholder="Search jobs or companies..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-
-          {filteredJobs.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No jobs available matching your search.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredJobs.map((job) => (
-                <div key={job._id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200">
-                  <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 relative bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center">
-                        <Image
-                          src={job.companyLogo || '/placeholder.svg'}
-                          alt={job.companyName}
-                          width={64}
-                          height={64}
-                          className="object-contain"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{job.title}</h3>
-                        <p className="text-gray-600">{job.companyName}</p>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEdit(job)}
-                        className="inline-flex items-center px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                      >
-                        <Edit2 className="w-4 h-4 mr-2" />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => {
-                          setDeletingJobId(job._id)
-                          setShowDeleteDialog(true)
-                        }}
-                        className="inline-flex items-center px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center space-x-2 text-gray-600">
-                      <MapPin className="w-4 h-4" />
-                      <span className="text-sm">{job.location}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-gray-600">
-                      <Briefcase className="w-4 h-4" />
-                      <span className="text-sm">{job.category}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-gray-600">
-                      <Award className="w-4 h-4" />
-                      <span className="text-sm">{job.experience}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-gray-600">
-                      <Clock className="w-4 h-4" />
-                      <span className="text-sm">{job.jobType}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        </form>
       </div>
 
-      {showDeleteDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Job</h3>
-            <p className="text-sm text-gray-600 mb-6">
-              Are you sure you want to delete this job? This action cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowDeleteDialog(false)
-                  setDeletingJobId(null)
-                }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(deletingJobId)}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-              >
-                Delete
-              </button>
-            </div>
+      <div className="space-y-6">
+        {filteredJobs.length === 0 ? (
+          <div className="text-center py-12">
+            <Briefcase className="mx-auto h-12 w-12 text-gray-400" />
+            <h3 className="mt-4 text-lg font-medium text-gray-900">No jobs available</h3>
+            <p className="mt-2 text-sm text-gray-500">Try adjusting your search terms or clear the filter</p>
           </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1">
+            {filteredJobs.map((job) => (
+              <div 
+                key={job._id} 
+                className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-200 p-6"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-16 h-16 relative flex-shrink-0">
+                      <Image
+                        src={job.companyLogo || '/placeholder.svg'}
+                        alt={job.companyName}
+                        width={64}
+                        height={64}
+                        className="rounded-lg object-contain bg-gray-50 p-2"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 truncate">{job.title}</h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
+                        <div className="flex items-center text-gray-500">
+                          <Building2 className="h-4 w-4 mr-1" />
+                          <span className="text-sm">{job.companyName}</span>
+                        </div>
+                        <div className="flex items-center text-gray-500">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          <span className="text-sm">{job.location}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 mt-4 lg:mt-0">
+                    <button
+                      onClick={() => handleEdit(job)}
+                      className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(job._id)}
+                      className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center text-gray-500">
+                    <Award className="h-4 w-4 mr-2" />
+                    <span className="text-sm">Experience: {job.experience}</span>
+                  </div>
+                  <div className="flex items-center text-gray-500">
+                    <Clock className="h-4 w-4 mr-2" />
+                    <span className="text-sm">Job Type: {job.jobType}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p className="text-sm text-gray-700">
+          Showing {Math.min((currentPage - 1) * jobsPerPage + 1, totalJobs)} - {Math.min(currentPage * jobsPerPage, totalJobs)} of {totalJobs} jobs
+        </p>
+        <div className="flex justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Previous
+          </button>
+          <button
+            onClick={() => setCurrentPage(prev => prev + 1)}
+            disabled={currentPage * jobsPerPage >= totalJobs}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            Next
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </button>
         </div>
-      )}
+      </div>
     </div>
   )
 }

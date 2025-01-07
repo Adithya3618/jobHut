@@ -4,11 +4,25 @@ import { verifyToken } from '../../lib/auth'
 
 export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page')) || 1
+    const limit = parseInt(searchParams.get('limit')) || 20
+    const search = searchParams.get('search') || ''
+    const skip = (page - 1) * limit
+
     const client = await clientPromise
     const db = client.db('jobhut')
+    
+    const query = search
+      ? { name: { $regex: search, $options: 'i' } }
+      : {}
+
+    const totalCoupons = await db.collection('coupons').countDocuments(query)
     const coupons = await db.collection('coupons')
-      .find({})
-      .sort({ createdAt: -1 })  // Sort by creation date, newest first
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .toArray()
     
     const serializedCoupons = coupons.map(coupon => ({
@@ -16,7 +30,12 @@ export async function GET(request) {
       _id: coupon._id.toString()
     }))
     
-    return NextResponse.json(serializedCoupons)
+    return NextResponse.json({
+      coupons: serializedCoupons,
+      total: totalCoupons,
+      page,
+      totalPages: Math.ceil(totalCoupons / limit)
+    })
   } catch (error) {
     console.error('Error in GET /api/coupons:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
