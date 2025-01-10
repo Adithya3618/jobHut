@@ -21,7 +21,7 @@ export default function Footer() {
               <span>Join WhatsApp Community</span>
             </Link>
             <Link 
-              href="https://t.me/+o14WQBO8VuMxOTM1"
+              href="https://t.me/jobhutin"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 mt-4"
