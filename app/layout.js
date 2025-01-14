@@ -145,17 +145,7 @@ export default function RootLayout({ children }) {
       <body>
         <GoogleTagManagerNoscript />
         {children}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/monetag-sw.js');
-                });
-              }
-            `,
-          }}
-        />
+        
       </body>
     </html>
   );
