@@ -83,7 +83,7 @@ export default function BlogList() {
                 <div className="space-y-3 border-t pt-4">
                   <div className="flex items-center text-sm text-gray-500">
                     <User className="w-4 h-4 mr-2 text-blue-500" />
-                    <span className="font-medium">{blog.author}</span>
+                    <span className="font-medium">Anonymous</span>
                   </div>
                   
                   <div className="flex items-center text-sm text-gray-500">
