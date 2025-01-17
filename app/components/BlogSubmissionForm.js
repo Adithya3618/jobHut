@@ -9,6 +9,8 @@ export default function BlogSubmissionForm() {
     content: '',
     author: '',
     category: 'blog',
+    tags: '',
+    relatedLinks: '',
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -41,6 +43,8 @@ export default function BlogSubmissionForm() {
         content: '',
         author: '',
         category: 'blog',
+        tags: '',
+        relatedLinks: '',
       })
     } catch (error) {
       console.error('Error submitting blog:', error)
@@ -80,8 +84,12 @@ export default function BlogSubmissionForm() {
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
         >
           <option value="blog">Blog</option>
-          <option value="interview">Interview Experience</option>
           <option value="article">Article</option>
+          <option value="interview">Interview Experience</option>
+          <option value="tutorial">Tutorial</option>
+          <option value="news">Industry News</option>
+          <option value="career">Career Advice</option>
+          <option value="other">Other</option>
         </select>
       </div>
 
@@ -102,7 +110,7 @@ export default function BlogSubmissionForm() {
 
       <div>
         <label htmlFor="content" className="block text-sm font-medium text-gray-700">
-          {blog.category === 'interview' ? 'Interview Experience' : 'Content'}
+          Content
         </label>
         <textarea
           id="content"
@@ -112,7 +120,34 @@ export default function BlogSubmissionForm() {
           required
           rows={10}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          placeholder={blog.category === 'interview' ? 'Share your interview experience...' : 'Write your content here...'}
+        ></textarea>
+      </div>
+
+      <div>
+        <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+          Tags (comma-separated)
+        </label>
+        <input
+          type="text"
+          id="tags"
+          name="tags"
+          value={blog.tags}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="relatedLinks" className="block text-sm font-medium text-gray-700">
+          Related Links (one per line)
+        </label>
+        <textarea
+          id="relatedLinks"
+          name="relatedLinks"
+          value={blog.relatedLinks}
+          onChange={handleChange}
+          rows={3}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
         ></textarea>
       </div>
 

@@ -1,21 +1,36 @@
 import { NextResponse } from 'next/server'
 import clientPromise from '../../lib/mongodb'
-import { verifyToken } from '../../lib/auth'
 import { ObjectId } from 'mongodb'
 
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status') || 'approved'
+    const status = searchParams.get('status') || 'all'
+    const search = searchParams.get('search') || ''
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '20')
 
     const client = await clientPromise
     const db = client.db('jobhut')
     
-    const query = { status: status }
+    const query = {}
+    if (status !== 'all') {
+      query.status = status
+    }
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+        { tags: { $regex: search, $options: 'i' } }
+      ]
+    }
 
+    const totalBlogs = await db.collection('blogs').countDocuments(query)
     const blogs = await db.collection('blogs')
       .find(query)
       .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .toArray()
     
     const serializedBlogs = blogs.map(blog => ({
@@ -25,7 +40,7 @@ export async function GET(request) {
       updatedAt: blog.updatedAt ? blog.updatedAt.toISOString() : null
     }))
     
-    return NextResponse.json({ blogs: serializedBlogs })
+    return NextResponse.json({ blogs: serializedBlogs, total: totalBlogs })
   } catch (error) {
     console.error('Error in GET /api/blogs:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
@@ -41,7 +56,9 @@ export async function POST(request) {
     const newBlog = {
       ...blog,
       createdAt: new Date(),
-      status: 'pending'
+      status: 'pending',
+      tags: blog.tags.split(',').map(tag => tag.trim()),
+      relatedLinks: blog.relatedLinks.split('\n').map(link => link.trim()).filter(Boolean)
     }
     
     const result = await db.collection('blogs').insertOne(newBlog)
@@ -68,6 +85,14 @@ export async function PUT(request) {
     const client = await clientPromise
     const db = client.db('jobhut')
     
+    if (updateData.status === 'rejected') {
+      const result = await db.collection('blogs').deleteOne({ _id: new ObjectId(id) })
+      if (result.deletedCount === 0) {
+        return NextResponse.json({ error: 'Blog not found' }, { status: 404 })
+      }
+      return NextResponse.json({ success: true, message: 'Blog rejected and deleted' })
+    }
+    
     const result = await db.collection('blogs').updateOne(
       { _id: new ObjectId(id) },
       { $set: { ...updateData, updatedAt: new Date() } }
@@ -86,16 +111,6 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
   try {
-    const token = request.headers.get('authorization')?.split(' ')[1]
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const decodedToken = verifyToken(token)
-    if (!decodedToken) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
-    }
-
     const { id } = await request.json()
     const client = await clientPromise
     const db = client.db('jobhut')
@@ -106,7 +121,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, message: 'Blog deleted successfully' })
   } catch (error) {
     console.error('Error in DELETE /api/blogs:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

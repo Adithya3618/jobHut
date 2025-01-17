@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import Image from 'next/image'
-import { Home, Briefcase, BookOpen } from 'lucide-react'
+import { Home, Briefcase, BookOpen, FileText } from 'lucide-react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -48,6 +48,13 @@ export default function Header() {
             >
               <BookOpen className="w-4 h-4" />
               <span>Courses</span>
+            </Link>
+            <Link
+              href="/blogs"
+              className="text-gray-600 hover:text-blue-600 flex items-center space-x-1"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Blogs</span>
             </Link>
           </nav>
 
@@ -120,6 +127,15 @@ export default function Header() {
                   <span>Courses</span>
                 </div>
               </Link>
+              <Link
+                href="/blogs"
+                className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+              >
+                <div className="flex items-center space-x-1">
+                  <FileText className="w-4 h-4" />
+                  <span>Blogs</span>
+                </div>
+              </Link>
             </div>
           </div>
         )}
@@ -127,4 +143,3 @@ export default function Header() {
     </header>
   )
 }
-
