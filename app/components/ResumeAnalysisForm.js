@@ -11,10 +11,20 @@ export default function ResumeAnalysisForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]
-    if (selectedFile && (selectedFile.type === 'application/pdf' || selectedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+    if (!selectedFile) return
+
+    if (selectedFile.size > 10 * 1024 * 1024) { // 10MB limit
+      setError('File size must be less than 10MB')
+      setFile(null)
+      return
+    }
+
+    if (selectedFile.type === 'application/pdf' || 
+        selectedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
       setFile(selectedFile)
       setError(null)
     } else {
@@ -28,29 +38,35 @@ export default function ResumeAnalysisForm() {
     setIsLoading(true)
     setResult(null)
     setError(null)
+    setUploadProgress(0)
 
     let content = resumeContent
 
     if (file) {
       const formData = new FormData()
       formData.append('file', file)
+      
       try {
         const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData
         })
+
         if (!response.ok) {
-          throw new Error('File upload failed')
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'File upload failed')
         }
+
         const data = await response.json()
         if (data.success) {
           content = data.text
+          setUploadProgress(100)
         } else {
-          throw new Error(data.error || 'File upload failed')
+          throw new Error(data.error || 'Failed to extract text from file')
         }
       } catch (error) {
         setIsLoading(false)
-        setError(error.message || 'An unknown error occurred')
+        setError(error.message || 'An unknown error occurred during file upload')
         return
       }
     }
@@ -61,36 +77,36 @@ export default function ResumeAnalysisForm() {
       return
     }
 
-    const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyB5OXRVT7-ga8OaCKMIqyACEA8A0TVZ6ZE"
-    
-    let prompt = `Analyze the following resume and provide a detailed assessment. Include:
-    1. Overall score out of 10
-    2. Strengths of the resume
-    3. Areas for improvement
-    4. Missing important keywords or sections
-    5. Suggestions for better formatting or structure
-    6. Any additional advice for making the resume stand out
-
-    Resume content:
-    ${content}`
-    
-    if (analysisType === 'job' && jobDescription) {
-      prompt = `Analyze the following resume for the given job description. Provide a detailed assessment including:
-      1. Overall score out of 10 for job fit
-      2. Strengths of the resume in relation to the job
-      3. Areas for improvement to better match the job requirements
-      4. Missing important keywords or qualifications from the job description
-      5. Suggestions for tailoring the resume to this specific job
-      6. Any additional advice for increasing chances of getting an interview
+    try {
+      const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyB5OXRVT7-ga8OaCKMIqyACEA8A0TVZ6ZE"
+      
+      let prompt = `Analyze the following resume and provide a detailed assessment. Include:
+      1. Overall score out of 10
+      2. Strengths of the resume
+      3. Areas for improvement
+      4. Missing important keywords or sections
+      5. Suggestions for better formatting or structure
+      6. Any additional advice for making the resume stand out
 
       Resume content:
-      ${content}
+      ${content}`
+      
+      if (analysisType === 'job' && jobDescription) {
+        prompt = `Analyze the following resume for the given job description. Provide a detailed assessment including:
+        1. Overall score out of 10 for job fit
+        2. Strengths of the resume in relation to the job
+        3. Areas for improvement to better match the job requirements
+        4. Missing important keywords or qualifications from the job description
+        5. Suggestions for tailoring the resume to this specific job
+        6. Any additional advice for increasing chances of getting an interview
 
-      Job Description:
-      ${jobDescription}`
-    }
+        Resume content:
+        ${content}
 
-    try {
+        Job Description:
+        ${jobDescription}`
+      }
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -164,7 +180,19 @@ export default function ResumeAnalysisForm() {
                 <p className="text-xs text-gray-500">PDF or Word up to 10MB</p>
               </div>
             </div>
-            {file && <p className="mt-2 text-sm text-gray-600">Selected file: {file.name}</p>}
+            {file && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">Selected file: {file.name}</p>
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div>
