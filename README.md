@@ -136,7 +136,7 @@ The easiest way to deploy JobHut is to use the [Vercel Platform](https://vercel.
 
 ## 📞 Support
 
-For support, email support@jobhut.com or join our [Discord community](discord-link).
+For support, email jobhut.team@gmail.com or join our [Discord community](discord-link).
 
 ---
 

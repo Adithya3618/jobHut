@@ -141,11 +141,17 @@ export default function RootLayout({ children }) {
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+
+        {/* Multi Tag Ad Script */}
+        <Script id="multi-tag-ad" strategy="afterInteractive">
+          {`
+            (function(d,z,s){s.src='https://'+d+'/400/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('vemtoutcheeg.com',8812911,document.createElement('script'));
+          `}
+        </Script>
       </head>
       <body>
         <GoogleTagManagerNoscript />
         {children}
-        
       </body>
     </html>
   );
