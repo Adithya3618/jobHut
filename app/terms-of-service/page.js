@@ -62,7 +62,7 @@ export default function TermsOfServicePage() {
                 <div className="flex items-start mb-4">
                   <Shield className="w-6 h-6 text-blue-500 mr-3 mt-1" />
                   <div>
-                    <h2 className="text-2xl font-semibold">3. User Conduct</h2>
+                    <h2 className="text-2xl font-semibold">2. User Conduct</h2>
                     <p className="mt-4 text-gray-600 leading-relaxed">
                       You agree not to use JobHut for any unlawful purpose or in any way that could damage, disable, overburden, or impair our services. This includes, but is not limited to:
                     </p>
@@ -86,12 +86,12 @@ export default function TermsOfServicePage() {
               {/* Other Sections */}
               {[
                 {
-                  title: "4. Intellectual Property",
+                  title: "3. Intellectual Property",
                   icon: <FileText className="w-6 h-6 text-blue-500 mr-3 mt-1" />,
                   content: "All content on JobHut, including text, graphics, logos, and software, is the property of JobHut or its content suppliers and is protected by copyright laws. You may not reproduce, distribute, or create derivative works from this content without express written consent from JobHut."
                 },
                 {
-                  title: "5. Contact Us",
+                  title: "4. Contact Us",
                   icon: <Mail className="w-6 h-6 text-blue-500 mr-3 mt-1" />,
                   content: (
                     <>
