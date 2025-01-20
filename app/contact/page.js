@@ -48,14 +48,6 @@ export default function ContactPage() {
       link: 'mailto:jobhut.team@gmail.com',
       color: 'red',
       icon: <Mail className="w-8 h-8" />
-    },
-    {
-      id: 'phone',
-      title: 'Phone',
-      value: '+91 8500053412',
-      link: 'tel:+918500053412',
-      color: 'purple',
-      icon: <Phone className="w-8 h-8" />
     }
   ];
 

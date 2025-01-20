@@ -148,6 +148,11 @@ export default function RootLayout({ children }) {
             (function(d,z,s){s.src='https://'+d+'/400/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('vemtoutcheeg.com',8812911,document.createElement('script'));
           `}
         </Script>
+        <Script id="additional-multi-tag-ad" strategy="afterInteractive">
+          {`
+            (function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('groleegni.net',8821479,document.createElement('script'));
+          `}
+        </Script>
       </head>
       <body>
         <GoogleTagManagerNoscript />
@@ -156,4 +161,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
