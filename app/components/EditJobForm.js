@@ -1,28 +1,55 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { toast } from 'react-hot-toast'
+import { useState } from "react"
 
 const TECHNICAL_FIELDS = [
-  'Software Developer',
-  'Data Analyst',
-  'Web Developer',
-  'DevOps Engineer',
-  'System Engineer',
-  'Data Scientist',
-  'QA Engineer',
-  'Other'
+  "Software Developer",
+  "Data Analyst",
+  "Web Developer",
+  "DevOps Engineer",
+  "System Engineer",
+  "Data Scientist",
+  "QA Engineer",
+  "Other",
 ]
 
-const NON_TECHNICAL_FIELDS = [
-  'Marketing',
-  'Sales',
-  'HR',
-  'Finance',
-  'Operations',
-  'Customer Support',
-  'Other'
-]
+const NON_TECHNICAL_FIELDS = ["Marketing", "Sales", "HR", "Finance", "Operations", "Customer Support", "Other"]
+
+// Helper function to safely format date for input
+const formatDateForInput = (dateValue) => {
+  if (!dateValue || dateValue === null || dateValue === undefined) {
+    return ""
+  }
+
+  try {
+    if (typeof dateValue === "string") {
+      // Handle ISO date strings
+      if (dateValue.includes("T")) {
+        return dateValue.split("T")[0]
+      }
+      // Handle date strings that are already in YYYY-MM-DD format
+      if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return dateValue
+      }
+      // Try to parse other date formats
+      const parsed = new Date(dateValue)
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toISOString().split("T")[0]
+      }
+      return ""
+    }
+
+    const date = new Date(dateValue)
+    if (isNaN(date.getTime())) {
+      return ""
+    }
+
+    return date.toISOString().split("T")[0]
+  } catch (error) {
+    console.error("Error formatting date:", error)
+    return ""
+  }
+}
 
 export default function EditJobForm({ job, onSubmit, onCancel }) {
   const [editedJob, setEditedJob] = useState(job)
@@ -34,7 +61,7 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setEditedJob(prev => ({ ...prev, [name]: value }))
+    setEditedJob((prev) => ({ ...prev, [name]: value }))
   }
 
   return (
@@ -103,13 +130,15 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                   required
                 >
                   <option value="">Select Field</option>
-                  {(editedJob.category === 'technical' ? TECHNICAL_FIELDS : NON_TECHNICAL_FIELDS).map((field) => (
-                    <option key={field} value={field}>{field}</option>
+                  {(editedJob.category === "technical" ? TECHNICAL_FIELDS : NON_TECHNICAL_FIELDS).map((field) => (
+                    <option key={field} value={field}>
+                      {field}
+                    </option>
                   ))}
                 </select>
               </div>
 
-              {editedJob.subCategory === 'Other' && (
+              {editedJob.subCategory === "Other" && (
                 <div className="col-span-6">
                   <label htmlFor="otherSubCategory" className="block text-sm font-medium text-gray-700">
                     Specify Field
@@ -118,7 +147,7 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                     type="text"
                     id="otherSubCategory"
                     name="otherSubCategory"
-                    value={editedJob.otherSubCategory || ''}
+                    value={editedJob.otherSubCategory || ""}
                     onChange={handleChange}
                     className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     required
@@ -144,7 +173,7 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                 </select>
               </div>
 
-              {editedJob.experience === 'other' && (
+              {editedJob.experience === "other" && (
                 <div className="col-span-6 sm:col-span-3">
                   <label htmlFor="otherExperience" className="block text-sm font-medium text-gray-700">
                     Specify Experience
@@ -153,7 +182,7 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                     type="text"
                     id="otherExperience"
                     name="otherExperience"
-                    value={editedJob.otherExperience || ''}
+                    value={editedJob.otherExperience || ""}
                     onChange={handleChange}
                     className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     required
@@ -216,7 +245,6 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                   value={editedJob.salary}
                   onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                
                 />
               </div>
 
@@ -247,10 +275,15 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
                   type="date"
                   name="lastDate"
                   id="lastDate"
-                  value={editedJob.lastDate.split('T')[0]}
+                  value={
+                    editedJob.lastDate
+                      ? typeof editedJob.lastDate === "string"
+                        ? editedJob.lastDate.split("T")[0]
+                        : new Date(editedJob.lastDate).toISOString().split("T")[0]
+                      : ""
+                  }
                   onChange={handleChange}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            
                 />
               </div>
 
@@ -306,4 +339,3 @@ export default function EditJobForm({ job, onSubmit, onCancel }) {
     </form>
   )
 }
-
