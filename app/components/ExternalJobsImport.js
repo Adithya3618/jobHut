@@ -2,7 +2,33 @@ import { useState, useEffect } from 'react';
 
 const PLACEHOLDER_LOGO = '/placeholder.svg';
 
+function stripHtml(html) {
+  if (!html) return '';
+  return html.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 function getInitialMappedJob(job) {
+  // Remote OK mapping
+  if (job.slug && job.apply_url && job.position && job.company) {
+    return {
+      title: job.position || '',
+      companyName: job.company || '',
+      companyLogo: job.company_logo || job.logo || '',
+      overview: stripHtml(job.description) || '',
+      location: job.location || '',
+      salary: (job.salary_min && job.salary_max) ? `$${job.salary_min} - $${job.salary_max}` : '',
+      experience: '',
+      qualification: '',
+      lastDate: '',
+      category: '',
+      subCategory: '',
+      jobType: '',
+      applyLink: job.apply_url || job.url || '',
+      source: 'remoteok',
+      externalJobId: job.id || job.slug || '',
+      skills: Array.isArray(job.tags) ? job.tags.join(', ') : '',
+    };
+  }
   return {
     title: job.title || job.job_title || '',
     companyName: job.organization || job.company || job.company_name || '',
@@ -359,6 +385,16 @@ export default function ExternalJobsImport() {
               className="mr-2"
             />
             LinkedIn Jobs
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              value="remoteok"
+              checked={apiSource === 'remoteok'}
+              onChange={(e) => setApiSource(e.target.value)}
+              className="mr-2"
+            />
+            Remote OK
           </label>
           <label className="flex items-center">
             <input

@@ -32,6 +32,9 @@ export async function GET(request) {
           'x-rapidapi-host': config.host
         }
       };
+    } else if (apiSource === 'remoteok') {
+      url = config.endpoint;
+      options = { method: 'GET' };
     } else {
       return NextResponse.json({ error: 'Invalid API source' }, { status: 400 });
     }
@@ -53,9 +56,26 @@ export async function GET(request) {
       }, { status: response.status });
     }
 
-    const data = await response.json();
+    let data = await response.json();
     let jobsArray = [];
-    if (Array.isArray(data)) {
+    if (apiSource === 'remoteok') {
+      // RemoteOK returns an array, first element is metadata, skip it
+      if (Array.isArray(data)) {
+        jobsArray = data.slice(1); // skip metadata
+      } else {
+        jobsArray = [];
+      }
+      // Filter by title and location
+      const titleLower = title.trim().toLowerCase();
+      const locationLower = location.trim().toLowerCase();
+      jobsArray = jobsArray.filter(job => {
+        const jobTitle = (job.position || '').toLowerCase();
+        const jobLocation = (job.location || '').toLowerCase();
+        const titleMatch = !titleLower || jobTitle.includes(titleLower);
+        const locationMatch = !locationLower || jobLocation.includes(locationLower);
+        return titleMatch && locationMatch;
+      });
+    } else if (Array.isArray(data)) {
       jobsArray = data;
     } else if (data.jobs && Array.isArray(data.jobs)) {
       jobsArray = data.jobs;
