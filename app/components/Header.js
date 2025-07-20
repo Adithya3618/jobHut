@@ -56,6 +56,13 @@ export default function Header() {
               <FileText className="w-4 h-4" />
               <span>Blogs</span>
             </Link>
+            <Link
+              href="/resume-analysis"
+              className="text-gray-600 hover:text-blue-600 flex items-center space-x-1"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Resume Analysis</span>
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -134,6 +141,15 @@ export default function Header() {
                 <div className="flex items-center space-x-1">
                   <FileText className="w-4 h-4" />
                   <span>Blogs</span>
+                </div>
+              </Link>
+              <Link
+                href="/resume-analysis"
+                className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+              >
+                <div className="flex items-center space-x-1">
+                  <FileText className="w-4 h-4" />
+                  <span>Resume Analysis</span>
                 </div>
               </Link>
             </div>
