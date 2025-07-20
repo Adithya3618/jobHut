@@ -16,17 +16,6 @@ export async function GET() {
   }
 }
 
-export async function GET_PUBLIC() {
-  try {
-    const client = await clientPromise;
-    const db = client.db('jobhut');
-    const apis = await db.collection('external_apis').find({ enabled: true }).toArray();
-    return NextResponse.json({ success: true, apis });
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-}
-
 export async function POST(req) {
   if (!isAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {

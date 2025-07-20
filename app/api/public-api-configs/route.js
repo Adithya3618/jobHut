@@ -1,3 +1,11 @@
-import { GET_PUBLIC } from '../admin-api-configs/route';
+import { NextResponse } from 'next/server';
+import { getPublicApiConfigs } from '../../lib/apiHelpers';
 
-export const GET = GET_PUBLIC; 
+export async function GET() {
+  try {
+    const apis = await getPublicApiConfigs();
+    return NextResponse.json({ success: true, apis });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+} 
