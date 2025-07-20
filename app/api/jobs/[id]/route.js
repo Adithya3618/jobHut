@@ -87,7 +87,20 @@ export async function PUT(request, context) {
       )
     }
 
-    return NextResponse.json({ success: true })
+    // Fetch the updated job to return it
+    const updatedJobFromDB = await db.collection('jobs').findOne({
+      _id: new ObjectId(id)
+    })
+
+    const serializedUpdatedJob = {
+      ...updatedJobFromDB,
+      _id: updatedJobFromDB._id.toString(),
+      datePosted: updatedJobFromDB.datePosted ? new Date(updatedJobFromDB.datePosted).toISOString() : null,
+      lastDate: updatedJobFromDB.lastDate ? new Date(updatedJobFromDB.lastDate).toISOString() : null,
+      expirationDate: updatedJobFromDB.expirationDate ? new Date(updatedJobFromDB.expirationDate).toISOString() : null
+    }
+
+    return NextResponse.json({ success: true, job: serializedUpdatedJob })
   } catch (error) {
     console.error('Error in PUT /api/jobs/[id]:', error)
     return NextResponse.json(

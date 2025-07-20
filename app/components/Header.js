@@ -18,7 +18,7 @@ export default function Header() {
           >
             <Image
               src="https://github.com/saibadarinadh/jobHut/blob/main/public/LOGO.jpg?raw=true"
-              alt="logo"
+              alt="JobHut Logo"
               width={40}
               height={40}
               className="mr-2"

@@ -100,7 +100,7 @@ export default function JobDetailsContent({ id }) {
               <div className="w-24 h-24 bg-white rounded-lg shadow-md p-2">
                 <Image
                   src={job.companyLogo || '/placeholder.svg'}
-                  alt={`${job.companyName} logo`}
+                  alt={`${job.companyName || 'Company'} logo`}
                   width={96}
                   height={96}
                   className="rounded-lg object-contain"

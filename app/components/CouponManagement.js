@@ -82,9 +82,15 @@ export default function CouponManagement() {
         body: JSON.stringify(updatedCoupon)
       })
       if (!response.ok) throw new Error('Failed to update coupon')
-      setCoupons(coupons.map(coupon => coupon._id === updatedCoupon._id ? updatedCoupon : coupon))
-      setEditingCoupon(null)
-      toast.success('Coupon updated successfully')
+      
+      const result = await response.json()
+      if (result.success && result.coupon) {
+        setCoupons(coupons.map(coupon => coupon._id === updatedCoupon._id ? result.coupon : coupon))
+        setEditingCoupon(null)
+        toast.success('Coupon updated successfully')
+      } else {
+        throw new Error('Failed to update coupon')
+      }
     } catch (error) {
       console.error('Error updating coupon:', error)
       toast.error('Error updating coupon')

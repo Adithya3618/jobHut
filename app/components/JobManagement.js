@@ -22,15 +22,14 @@ export default function JobManagement() {
 
   useEffect(() => {
     fetchJobs()
-  }, [currentPage, searchTerm])
+  }, [currentPage])
 
   const fetchJobs = async () => {
     try {
       setLoading(true)
       const queryParams = new URLSearchParams({
         page: currentPage.toString(),
-        limit: jobsPerPage.toString(),
-        search: searchTerm
+        limit: jobsPerPage.toString()
       })
       const response = await fetch(`/api/jobs?${queryParams}`)
       if (!response.ok) throw new Error('Failed to fetch jobs')
@@ -82,9 +81,14 @@ export default function JobManagement() {
       })
 
       if (response.ok) {
-        setJobs(jobs.map(job => job._id === updatedJob._id ? updatedJob : job))
-        setEditingJob(null)
-        toast.success('Job updated successfully')
+        const result = await response.json()
+        if (result.success && result.job) {
+          setJobs(jobs.map(job => job._id === updatedJob._id ? result.job : job))
+          setEditingJob(null)
+          toast.success('Job updated successfully')
+        } else {
+          throw new Error('Failed to update job')
+        }
       } else {
         throw new Error('Failed to update job')
       }
@@ -95,8 +99,8 @@ export default function JobManagement() {
   }
 
   const filteredJobs = jobs.filter(job => 
-    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+    (job.title && job.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (job.companyName && job.companyName.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   if (loading) return <Loading />
@@ -105,7 +109,7 @@ export default function JobManagement() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-        <form onSubmit={(e) => { e.preventDefault(); setCurrentPage(1); fetchJobs() }} className="relative">
+        <form onSubmit={(e) => { e.preventDefault(); }} className="relative">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
@@ -138,7 +142,7 @@ export default function JobManagement() {
                     <div className="w-16 h-16 relative flex-shrink-0">
                       <Image
                         src={job.companyLogo || '/placeholder.svg'}
-                        alt={job.companyName}
+                        alt={job.companyName || 'Company logo'}
                         width={64}
                         height={64}
                         className="rounded-lg object-contain bg-gray-50 p-2"

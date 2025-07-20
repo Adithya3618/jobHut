@@ -66,7 +66,17 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'Coupon not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true })
+    // Fetch the updated coupon to return it
+    const updatedCouponFromDB = await db.collection('coupons').findOne({
+      _id: new ObjectId(id)
+    })
+
+    const serializedUpdatedCoupon = {
+      ...updatedCouponFromDB,
+      _id: updatedCouponFromDB._id.toString()
+    }
+
+    return NextResponse.json({ success: true, coupon: serializedUpdatedCoupon })
   } catch (error) {
     console.error('Error in PUT /api/coupons/[id]:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
