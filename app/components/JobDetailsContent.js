@@ -77,6 +77,9 @@ export default function JobDetailsContent({ id }) {
   const lastDate = job.lastDate ? new Date(job.lastDate).toLocaleDateString() : 'N/A';
 
   const getJobTypeBadgeColor = (type) => {
+    if (!type || typeof type !== 'string') {
+      return 'bg-gray-100 text-gray-800';
+    }
     const colors = {
       intern: 'bg-purple-100 text-purple-800',
       fulltime: 'bg-green-100 text-green-800',
@@ -109,7 +112,7 @@ export default function JobDetailsContent({ id }) {
                 <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getJobTypeBadgeColor(job.jobType)}`}>
                   {job.jobType === 'intern+full' ? 'Intern + Full Time' :
-                    job.jobType.charAt(0).toUpperCase() + job.jobType.slice(1)}
+                    (job.jobType && typeof job.jobType === 'string' ? job.jobType.charAt(0).toUpperCase() + job.jobType.slice(1) : 'N/A')}
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-4 mt-3 text-gray-600">

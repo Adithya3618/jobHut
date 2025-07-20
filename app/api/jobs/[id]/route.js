@@ -6,7 +6,7 @@ import { verifyToken } from '../../../lib/auth'
 export async function GET(request, context) {
   try {
     const { params } = context;
-    const { id } = params;
+    const { id } = await params;
 
     if (!id || !ObjectId.isValid(id)) {
       return NextResponse.json(
@@ -50,7 +50,7 @@ export async function GET(request, context) {
 export async function PUT(request, context) {
   try {
     const { params } = context;
-    const { id } = params;
+    const { id } = await params;
     
     const token = request.headers.get('authorization')?.split(' ')[1]
     if (!token) {
@@ -100,7 +100,7 @@ export async function PUT(request, context) {
 export async function DELETE(request, context) {
   try {
     const { params } = context;
-    const { id } = params;
+    const { id } = await params;
     
     const token = request.headers.get('authorization')?.split(' ')[1]
     if (!token) {

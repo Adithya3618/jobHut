@@ -6,8 +6,8 @@ import Loading from '../../components/Loading'
 import PageViewWrapper from '../../components/PageViewWrapper'
 import AdSense from '../../components/AdSense'
 
-export default function JobDetails({ params }) {
-  const { id } = params
+export default async function JobDetails({ params }) {
+  const { id } = await params
 
   return (
     <PageViewWrapper>
