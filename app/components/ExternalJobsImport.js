@@ -87,6 +87,7 @@ export default function ExternalJobsImport() {
   const [filters, setFilters] = useState({ title: '', location: '' });
   const [importingId, setImportingId] = useState(null);
   const [apiSource, setApiSource] = useState('rapidapi');
+  const [apiConfigs, setApiConfigs] = useState([]);
   const [previewJob, setPreviewJob] = useState(null);
   const [mappedJob, setMappedJob] = useState(null);
   const [locationOptions, setLocationOptions] = useState([]);
@@ -98,6 +99,21 @@ export default function ExternalJobsImport() {
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [suggestError, setSuggestError] = useState('');
+
+  // Fetch enabled API configs on mount
+  useEffect(() => {
+    fetch('/api/public-api-configs')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && Array.isArray(data.apis)) {
+          setApiConfigs(data.apis);
+          // If current apiSource is not in the list, reset to first
+          if (!data.apis.some(api => api.id === apiSource)) {
+            setApiSource(data.apis[0]?.id || 'ai');
+          }
+        }
+      });
+  }, []);
 
   const fetchExternalJobs = async () => {
     setLoading(true);
@@ -365,43 +381,25 @@ export default function ExternalJobsImport() {
       {/* API Source Toggle */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">API Source:</label>
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              value="rapidapi"
-              checked={apiSource === 'rapidapi'}
-              onChange={(e) => setApiSource(e.target.value)}
-              className="mr-2"
-            />
-            RapidAPI Jobs
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              value="linkedin"
-              checked={apiSource === 'linkedin'}
-              onChange={(e) => setApiSource(e.target.value)}
-              className="mr-2"
-            />
-            LinkedIn Jobs
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              value="remoteok"
-              checked={apiSource === 'remoteok'}
-              onChange={(e) => setApiSource(e.target.value)}
-              className="mr-2"
-            />
-            Remote OK
-          </label>
-          <label className="flex items-center">
+        <div className="flex gap-4 flex-wrap">
+          {apiConfigs.map(api => (
+            <label className="flex items-center" key={api.id}>
+              <input
+                type="radio"
+                value={api.id}
+                checked={apiSource === api.id}
+                onChange={e => setApiSource(e.target.value)}
+                className="mr-2"
+              />
+              {api.name}
+            </label>
+          ))}
+          <label className="flex items-center" key="ai">
             <input
               type="radio"
               value="ai"
               checked={apiSource === 'ai'}
-              onChange={(e) => setApiSource(e.target.value)}
+              onChange={e => setApiSource(e.target.value)}
               className="mr-2"
             />
             AI Generated Jobs (Gemini)

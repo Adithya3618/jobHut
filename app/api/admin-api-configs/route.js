@@ -16,6 +16,17 @@ export async function GET() {
   }
 }
 
+export async function GET_PUBLIC() {
+  try {
+    const client = await clientPromise;
+    const db = client.db('jobhut');
+    const apis = await db.collection('external_apis').find({ enabled: true }).toArray();
+    return NextResponse.json({ success: true, apis });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function POST(req) {
   if (!isAdmin()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
@@ -45,7 +56,9 @@ export async function PUT(req) {
     }
     const client = await clientPromise;
     const db = client.db('jobhut');
-    await db.collection('external_apis').updateOne({ id: api.id }, { $set: api });
+    // Remove _id from update payload
+    const { _id, ...apiWithoutId } = api;
+    await db.collection('external_apis').updateOne({ id: api.id }, { $set: apiWithoutId });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

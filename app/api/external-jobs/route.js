@@ -1,6 +1,21 @@
 import { NextResponse } from 'next/server';
 import { getApiConfig } from '../../lib/apiConfig';
 
+function get(obj, path) {
+  if (!path) return obj;
+  return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
+}
+
+function mapJobFields(job, fieldMap) {
+  if (!fieldMap) return job;
+  const mapped = {};
+  for (const [to, from] of Object.entries(fieldMap)) {
+    const value = get(job, from);
+    mapped[to] = value !== undefined && typeof value !== 'object' ? value : (typeof value === 'object' && value !== null ? '' : value);
+  }
+  return { ...job, ...mapped };
+}
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -13,31 +28,28 @@ export async function GET(request) {
       return NextResponse.json({ error: `API config for ${apiSource} not found or disabled` }, { status: 500 });
     }
 
-    let url, options;
-    if (apiSource === 'rapidapi') {
-      url = `${config.endpoint}?limit=10&offset=0&title_filter="${encodeURIComponent(title)}"&location_filter="${encodeURIComponent(location)}"&description_type=text`;
-      options = {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': config.key,
-          'x-rapidapi-host': config.host
-        }
-      };
-    } else if (apiSource === 'linkedin') {
-      url = `${config.endpoint}?limit=20&offset=0&title_filter="${encodeURIComponent(title)}"&location_filter="${encodeURIComponent(location)}"`;
-      options = {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': config.key,
-          'x-rapidapi-host': config.host
-        }
-      };
-    } else if (apiSource === 'remoteok') {
-      url = config.endpoint;
-      options = { method: 'GET' };
-    } else {
-      return NextResponse.json({ error: 'Invalid API source' }, { status: 400 });
+    // Build URL with queryTemplate if provided
+    let url = config.endpoint;
+    if (config.queryTemplate) {
+      url += config.queryTemplate
+        .replace('{title}', encodeURIComponent(title))
+        .replace('{location}', encodeURIComponent(location));
     }
+
+    // Build headers
+    let headers = {};
+    if (config.headers && typeof config.headers === 'object') {
+      headers = { ...config.headers };
+    } else {
+      // fallback for legacy configs
+      if (config.key) headers['x-rapidapi-key'] = config.key;
+      if (config.host) headers['x-rapidapi-host'] = config.host;
+    }
+
+    const options = {
+      method: config.method || 'GET',
+      headers,
+    };
 
     const response = await fetch(url, options);
     if (!response.ok) {
@@ -57,34 +69,35 @@ export async function GET(request) {
     }
 
     let data = await response.json();
-    let jobsArray = [];
-    if (apiSource === 'remoteok') {
-      // RemoteOK returns an array, first element is metadata, skip it
-      if (Array.isArray(data)) {
-        jobsArray = data.slice(1); // skip metadata
-      } else {
-        jobsArray = [];
+    // Extract jobs array using jobsPath
+    let jobsArray = get(data, config.jobsPath);
+    if (!Array.isArray(jobsArray)) {
+      // fallback: try root array
+      if (Array.isArray(data)) jobsArray = data;
+      else jobsArray = [];
+    }
+
+    // Filter by title and location (case-insensitive, partial match)
+    const titleLower = title.trim().toLowerCase();
+    const locationLower = location.trim().toLowerCase();
+    jobsArray = jobsArray.filter(job => {
+      // Try to use mapped fields if fieldMap is present
+      let jobTitle = job.title || job.position || '';
+      let jobLocation = job.location || '';
+      if (config.fieldMap) {
+        if (config.fieldMap.title && job[config.fieldMap.title]) jobTitle = job[config.fieldMap.title];
+        if (config.fieldMap.location && job[config.fieldMap.location]) jobLocation = job[config.fieldMap.location];
       }
-      // Filter by title and location
-      const titleLower = title.trim().toLowerCase();
-      const locationLower = location.trim().toLowerCase();
-      jobsArray = jobsArray.filter(job => {
-        const jobTitle = (job.position || '').toLowerCase();
-        const jobLocation = (job.location || '').toLowerCase();
-        const titleMatch = !titleLower || jobTitle.includes(titleLower);
-        const locationMatch = !locationLower || jobLocation.includes(locationLower);
-        return titleMatch && locationMatch;
-      });
-    } else if (Array.isArray(data)) {
-      jobsArray = data;
-    } else if (data.jobs && Array.isArray(data.jobs)) {
-      jobsArray = data.jobs;
-    } else if (data.data && Array.isArray(data.data)) {
-      jobsArray = data.data;
-    } else if (data.results && Array.isArray(data.results)) {
-      jobsArray = data.results;
-    } else {
-      jobsArray = [];
+      jobTitle = jobTitle.toLowerCase();
+      jobLocation = jobLocation.toLowerCase();
+      const titleMatch = !titleLower || jobTitle.includes(titleLower);
+      const locationMatch = !locationLower || jobLocation.includes(locationLower);
+      return titleMatch && locationMatch;
+    });
+
+    // Map fields if fieldMap is present
+    if (config.fieldMap) {
+      jobsArray = jobsArray.map(job => mapJobFields(job, config.fieldMap));
     }
 
     return NextResponse.json({
