@@ -12,6 +12,8 @@ import PageViewWrapper from '../../components/PageViewWrapper';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { LogOut, Briefcase, PlusCircle, Tag } from 'lucide-react';
+import ExternalJobsImport from '../../components/ExternalJobsImport';
+import AdminApiConfig from '../../components/AdminApiConfig';
 
 export default function AdminDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -38,6 +40,8 @@ export default function AdminDashboard() {
     { id: 'coupons', label: 'Manage Coupons', icon: Tag },
     { id: 'addCoupon', label: 'Add New Coupon', icon: PlusCircle },
     { id: 'blogs', label: 'Manage Blogs', icon: Briefcase },
+    { id: 'externalJobs', label: 'Import Jobs', icon: PlusCircle },
+    { id: 'apiConfigs', label: 'API Configs', icon: Tag },
   ];
 
   if (!isLoggedIn) {
@@ -112,6 +116,8 @@ export default function AdminDashboard() {
                 {activeTab === 'coupons' && <CouponManagement />}
                 {activeTab === 'addCoupon' && <AddCouponForm />}
                 {activeTab === 'blogs' && <BlogManagement />}
+                {activeTab === 'externalJobs' && <ExternalJobsImport />}
+                {activeTab === 'apiConfigs' && <AdminApiConfig />}
               </Suspense>
             </div>
           </div>
