@@ -11,11 +11,21 @@ export const metadata = {
 export default function ResumeAnalysisPage() {
   return (
     <PageViewWrapper>
-      <div className="flex flex-col min-h-screen bg-gray-100">
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">Resume Analysis</h1>
-          <ResumeAnalysisForm />
+        <main className="flex-grow flex flex-col items-center justify-center px-4 py-12">
+          {/* Hero Section */}
+          <section className="w-full max-w-3xl mx-auto text-center mb-10">
+            <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white/70 backdrop-blur-md border border-blue-100 p-8 md:p-12">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-blue-700 mb-4 drop-shadow-sm">AI-Powered Resume Analysis</h1>
+              <p className="text-lg md:text-xl text-gray-700 mb-2">Get instant, actionable feedback on your resume and see how you match to your dream job.</p>
+              <p className="text-base text-blue-500 font-medium">Upload your resume or paste its content below. Our AI will do the rest!</p>
+            </div>
+          </section>
+          {/* Form Section */}
+          <section className="w-full max-w-4xl mx-auto">
+            <ResumeAnalysisForm />
+          </section>
         </main>
         <Footer />
       </div>

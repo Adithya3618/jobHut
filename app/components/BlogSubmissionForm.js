@@ -11,6 +11,7 @@ export default function BlogSubmissionForm() {
     category: 'blog',
     tags: '',
     relatedLinks: '',
+    image: '', // Added image field
   })
   const [isLoading, setIsLoading] = useState(false)
 
@@ -45,6 +46,7 @@ export default function BlogSubmissionForm() {
         category: 'blog',
         tags: '',
         relatedLinks: '',
+        image: '', // Reset image field
       })
     } catch (error) {
       console.error('Error submitting blog:', error)
@@ -149,6 +151,21 @@ export default function BlogSubmissionForm() {
           rows={3}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
         ></textarea>
+      </div>
+
+      <div>
+        <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+          Cover Image URL
+        </label>
+        <input
+          type="url"
+          id="image"
+          name="image"
+          value={blog.image}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          placeholder="https://example.com/your-image.jpg"
+        />
       </div>
 
       <div>

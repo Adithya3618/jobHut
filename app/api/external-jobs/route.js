@@ -30,7 +30,7 @@ export async function GET(request) {
 
     // Build URL with queryTemplate if provided
     let url = config.endpoint;
-    if (config.queryTemplate) {
+    if (config.queryTemplate && apiSource !== 'jooble') {
       url += config.queryTemplate
         .replace('{title}', encodeURIComponent(title))
         .replace('{location}', encodeURIComponent(location));
@@ -46,14 +46,31 @@ export async function GET(request) {
       if (config.host) headers['x-rapidapi-host'] = config.host;
     }
 
-    const options = {
+    let options = {
       method: config.method || 'GET',
       headers,
     };
 
+    // Special handling for Jooble: POST with JSON body
+    if (apiSource === 'jooble') {
+      // Use defaults if fields are empty
+      const joobleKeywords = title || 'it';
+      const joobleLocation = location || 'world jobs';
+      const joobleBody = JSON.stringify({
+        keywords: joobleKeywords,
+        location: joobleLocation
+      });
+      console.log('[Jooble Debug] URL:', url);
+      console.log('[Jooble Debug] Headers:', headers);
+      console.log('[Jooble Debug] Body:', joobleBody);
+      options.body = joobleBody;
+    }
+
     const response = await fetch(url, options);
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`[External API Error] Status: ${response.status}`);
+      console.error(`[External API Error] Body:`, errorText);
       if (response.status === 429) {
         return NextResponse.json({
           error: 'API quota exceeded',
@@ -64,7 +81,12 @@ export async function GET(request) {
       return NextResponse.json({
         error: 'External API error',
         message: `Failed to fetch jobs from ${apiSource}`,
-        details: errorText
+        details: errorText,
+        debug: {
+          url,
+          headers,
+          body: options.body || null
+        }
       }, { status: response.status });
     }
 

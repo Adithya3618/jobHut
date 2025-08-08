@@ -125,141 +125,167 @@ export default function ResumeAnalysisForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white shadow-lg rounded-xl overflow-hidden">
-        <div className="p-6 sm:p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Resume Analysis Tool(Beta)</h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Upload your resume (PDF or Word)</label>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors duration-200 ${file ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'}`}
-                onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                onDrop={handleDrop}
-                onDragOver={e => e.preventDefault()}
-              >
-                {file ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <FileText className="w-8 h-8 text-green-600" />
-                    <span className="text-green-800 font-medium">{file.name}</span>
-                    <button type="button" className="text-xs text-red-600 underline mt-1" onClick={handleRemoveFile}><X className="inline w-4 h-4 mr-1" />Remove</button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="w-8 h-8 text-blue-500" />
-                    <span className="text-gray-600">Drag & drop or click to upload PDF/DOCX</span>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </div>
-              <div className="text-xs text-gray-500 mt-1">Max file size: 10MB</div>
-              <div className="text-xs text-blue-600 mt-1">Tip: If PDF upload fails, try converting your resume to DOCX or paste the text below.</div>
+    <div className="w-full">
+      <div className="relative bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl border border-blue-200 max-w-3xl mx-auto p-6 sm:p-10 transition-all duration-300">
+        {/* Stepper for Analysis Type */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex rounded-full bg-blue-50 p-1 border border-blue-100 shadow-inner">
+            <button
+              type="button"
+              onClick={() => setAnalysisType('resume')}
+              className={`flex items-center gap-2 px-6 py-2 rounded-full text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                analysisType === 'resume'
+                  ? 'bg-blue-600 text-white shadow-lg scale-105'
+                  : 'bg-transparent text-blue-700 hover:bg-blue-100'
+              }`}
+              aria-pressed={analysisType === 'resume'}
+            >
+              <FileText className="h-5 w-5" /> Resume Analysis
+            </button>
+            <button
+              type="button"
+              onClick={() => setAnalysisType('job')}
+              className={`flex items-center gap-2 px-6 py-2 rounded-full text-base font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                analysisType === 'job'
+                  ? 'bg-blue-600 text-white shadow-lg scale-105'
+                  : 'bg-transparent text-blue-700 hover:bg-blue-100'
+              }`}
+              aria-pressed={analysisType === 'job'}
+            >
+              <Briefcase className="h-5 w-5" /> Job Match
+            </button>
+          </div>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-7">
+          {/* File Upload */}
+          <div>
+            <label className="block text-sm font-semibold text-blue-700 mb-2">Upload Resume (PDF or DOCX)</label>
+            <div
+              className={`border-2 border-dashed rounded-2xl p-7 text-center cursor-pointer transition-colors duration-200 ${file ? 'border-green-400 bg-green-50/70' : 'border-blue-200 bg-blue-50/60 hover:border-blue-400 hover:bg-blue-100/80'}`}
+              onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              onDrop={handleDrop}
+              onDragOver={e => e.preventDefault()}
+            >
+              {file ? (
+                <div className="flex flex-col items-center gap-2 animate-fade-in">
+                  <FileText className="w-8 h-8 text-green-600" />
+                  <span className="text-green-800 font-medium">{file.name}</span>
+                  <button type="button" className="text-xs text-red-600 underline mt-1 flex items-center gap-1" onClick={handleRemoveFile}><X className="inline w-4 h-4" />Remove</button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 animate-fade-in">
+                  <Upload className="w-8 h-8 text-blue-500" />
+                  <span className="text-blue-700">Drag & drop or click to upload</span>
+                  <span className="text-xs text-gray-500">Max 10MB. PDF or DOCX only.</span>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                className="hidden"
+                onChange={handleFileChange}
+              />
             </div>
-            <div className="flex items-center justify-center my-2 text-gray-500 text-sm font-medium">OR</div>
+            <div className="text-xs text-blue-600 mt-1">Tip: If PDF upload fails, try converting your resume to DOCX or paste the text below.</div>
+          </div>
+          {/* OR Divider */}
+          <div className="flex items-center justify-center my-2 text-blue-400 text-sm font-semibold">
+            <span className="px-3">OR</span>
+          </div>
+          {/* Paste Resume */}
+          <div>
+            <label htmlFor="resumeContent" className="block text-sm font-semibold text-blue-700 mb-2">
+              Paste Resume Content
+            </label>
+            <textarea
+              id="resumeContent"
+              rows={7}
+              className="w-full px-4 py-3 text-blue-900 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 bg-blue-50/60"
+              value={resumeContent}
+              onChange={(e) => setResumeContent(e.target.value)}
+              placeholder="Paste your resume content here..."
+              disabled={!!file}
+            ></textarea>
+          </div>
+          {/* Job Description (if job match) */}
+          {analysisType === 'job' && (
             <div>
-              <label htmlFor="resumeContent" className="block text-sm font-medium text-gray-700 mb-1">
-                Paste your resume content
+              <label htmlFor="jobDescription" className="block text-sm font-semibold text-blue-700 mb-2">
+                Job Description
               </label>
               <textarea
-                id="resumeContent"
-                rows={8}
-                className="w-full px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                value={resumeContent}
-                onChange={(e) => setResumeContent(e.target.value)}
-                placeholder="Paste your resume content here..."
-                disabled={!!file}
+                id="jobDescription"
+                rows={5}
+                className="w-full px-4 py-3 text-blue-900 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 bg-blue-50/60"
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                placeholder="Paste the job description here..."
               ></textarea>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Analysis Type</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setAnalysisType('resume')}
-                  className={`flex items-center justify-center px-4 py-3 border rounded-lg text-sm font-medium transition duration-200 ${
-                    analysisType === 'resume'
-                      ? 'bg-blue-600 text-white border-transparent'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <FileText className="mr-2 h-5 w-5" />
-                  Resume Analysis
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAnalysisType('job')}
-                  className={`flex items-center justify-center px-4 py-3 border rounded-lg text-sm font-medium transition duration-200 ${
-                    analysisType === 'job'
-                      ? 'bg-blue-600 text-white border-transparent'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <Briefcase className="mr-2 h-5 w-5" />
-                  Job Match Analysis
-                </button>
-              </div>
-            </div>
-            {analysisType === 'job' && (
-              <div>
-                <label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700 mb-1">
-                  Job Description
-                </label>
-                <textarea
-                  id="jobDescription"
-                  rows={5}
-                  className="w-full px-4 py-3 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Paste the job description here..."
-                ></textarea>
-              </div>
-            )}
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Analyzing...
-                  </>
-                ) : 'Analyze Resume'}
-              </button>
-            </div>
-          </form>
-          {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
-              <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
-              <p className="text-sm text-red-700 whitespace-pre-line">{error}</p>
-            </div>
           )}
-          {result && (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              {result.map((section, idx) => (
-                <div key={idx} className="bg-white rounded-xl shadow p-6 border border-blue-100 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-5 h-5 text-yellow-500" />
-                    <span className="font-semibold text-blue-900 text-lg">{section.title}</span>
-                  </div>
-                  <div className="text-gray-700 whitespace-pre-line text-base leading-relaxed">{section.content}</div>
+          {/* Submit Button */}
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex justify-center items-center px-4 py-3 border border-transparent rounded-xl shadow-md text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Analyzing...
+                </>
+              ) : 'Analyze Resume'}
+            </button>
+          </div>
+        </form>
+        {/* Error Message */}
+        {error && (
+          <div className="mt-7 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start animate-fade-in">
+            <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+            <p className="text-sm text-red-700 whitespace-pre-line">{error}</p>
+          </div>
+        )}
+        {/* Results */}
+        {result && (
+          <div className="mt-10 grid gap-7 sm:grid-cols-2 animate-fade-in">
+            {result.map((section, idx) => (
+              <div key={idx} className="bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-2xl shadow-lg p-6 border border-blue-100 flex flex-col gap-2 transition-transform duration-300 hover:scale-[1.02]">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-5 h-5 text-yellow-500" />
+                  <span className="font-semibold text-blue-900 text-lg">{section.title}</span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+                <div className="text-blue-900 whitespace-pre-line text-base leading-relaxed">{section.content}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Loader Overlay */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center z-10 rounded-3xl animate-fade-in">
+            <svg className="animate-spin h-12 w-12 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span className="text-blue-700 font-semibold text-lg">Analyzing your resume...</span>
+          </div>
+        )}
       </div>
+      {/* Animations */}
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: none; }
+        }
+      `}</style>
     </div>
-  )
+  );
 }
 

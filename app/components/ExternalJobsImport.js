@@ -496,18 +496,31 @@ export default function ExternalJobsImport() {
               <th className="px-4 py-2 border">Title</th>
               <th className="px-4 py-2 border">Company</th>
               <th className="px-4 py-2 border">Location</th>
+              <th className="px-4 py-2 border">Apply Link</th>
               <th className="px-4 py-2 border">Action</th>
             </tr>
           </thead>
           <tbody>
             {jobs.length === 0 && !loading && (
-              <tr><td colSpan={4} className="text-center py-4">No jobs found.</td></tr>
+              <tr><td colSpan={5} className="text-center py-4">No jobs found.</td></tr>
             )}
             {jobs.map((job, idx) => (
               <tr key={job.id || job._id || idx}>
                 <td className="border px-4 py-2">{job.title || job.job_title || ''}</td>
                 <td className="border px-4 py-2">{job.organization || job.company || job.company_name || ''}</td>
                 <td className="border px-4 py-2">{(job.locations_derived && job.locations_derived[0]) || (job.locations_alt_raw && job.locations_alt_raw[0]) || job.location || ''}</td>
+                <td className="border px-4 py-2">
+                  {job.link || job.applyLink || job.url || job.job_url ? (
+                    <a
+                      href={job.link || job.applyLink || job.url || job.job_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      Apply
+                    </a>
+                  ) : ''}
+                </td>
                 <td className="border px-4 py-2 flex gap-2">
                   <button
                     className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 disabled:opacity-50"
