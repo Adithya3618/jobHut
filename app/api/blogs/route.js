@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import clientPromise from '../../lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { verifyToken } from '../../lib/auth'
 
 export async function GET(request) {
   try {
@@ -9,6 +10,8 @@ export async function GET(request) {
     const search = searchParams.get('search') || ''
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
+
+    console.log('[Blogs API] Request params:', { status, search, page, limit })
 
     const client = await clientPromise
     const db = client.db('jobhut')
@@ -25,13 +28,19 @@ export async function GET(request) {
       ]
     }
 
+    console.log('[Blogs API] Query:', query)
+
     const totalBlogs = await db.collection('blogs').countDocuments(query)
+    console.log('[Blogs API] Total blogs found:', totalBlogs)
+    
     const blogs = await db.collection('blogs')
       .find(query)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .toArray()
+    
+    console.log('[Blogs API] Blogs returned:', blogs.length)
     
     const serializedBlogs = blogs.map(blog => ({
       ...blog,
@@ -40,10 +49,19 @@ export async function GET(request) {
       updatedAt: blog.updatedAt ? blog.updatedAt.toISOString() : null
     }))
     
-    return NextResponse.json({ blogs: serializedBlogs, total: totalBlogs })
+    return NextResponse.json({ 
+      blogs: serializedBlogs, 
+      total: totalBlogs,
+      page,
+      limit,
+      hasMore: (page * limit) < totalBlogs
+    })
   } catch (error) {
     console.error('Error in GET /api/blogs:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Internal Server Error',
+      message: error.message 
+    }, { status: 500 })
   }
 }
 
@@ -57,8 +75,8 @@ export async function POST(request) {
       ...blog,
       createdAt: new Date(),
       status: 'pending',
-      tags: blog.tags.split(',').map(tag => tag.trim()),
-      relatedLinks: blog.relatedLinks.split('\n').map(link => link.trim()).filter(Boolean)
+      tags: blog.tags ? blog.tags.split(',').map(tag => tag.trim()) : [],
+      relatedLinks: blog.relatedLinks ? blog.relatedLinks.split('\n').map(link => link.trim()).filter(Boolean) : []
     }
     
     const result = await db.collection('blogs').insertOne(newBlog)

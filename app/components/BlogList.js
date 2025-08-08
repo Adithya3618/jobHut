@@ -17,19 +17,59 @@ export default function BlogList() {
   const fetchBlogs = async () => {
     try {
       setLoading(true)
+      setError(null)
+      console.log('Fetching blogs with status=approved and search:', searchTerm)
+      
       const response = await fetch(`/api/blogs?status=approved&search=${searchTerm}`)
-      if (!response.ok) throw new Error('Failed to fetch blogs')
+      console.log('Blog API response status:', response.status)
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('Blog API error:', errorData)
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch blogs`)
+      }
+      
       const data = await response.json()
-      setBlogs(data.blogs)
+      console.log('Blog API response data:', data)
+      
+      if (data.blogs && Array.isArray(data.blogs)) {
+        setBlogs(data.blogs)
+      } else {
+        console.warn('Blog API returned invalid data structure:', data)
+        setBlogs([])
+      }
     } catch (error) {
+      console.error('Error fetching blogs:', error)
       setError('Failed to load blogs. Please try again later.')
+      setBlogs([])
     } finally {
       setLoading(false)
     }
   }
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>
-  if (error) return <div className="text-red-600">{error}</div>
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading blogs...</p>
+      </div>
+    </div>
+  )
+  
+  if (error) return (
+    <div className="text-center py-8">
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+        <div className="text-red-800 font-medium mb-2">Error Loading Blogs</div>
+        <div className="text-red-600 text-sm">{error}</div>
+        <button 
+          onClick={fetchBlogs}
+          className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="w-full">
@@ -53,8 +93,15 @@ export default function BlogList() {
 
       {/* Blog cards */}
       <div className="flex flex-col gap-10">
-        {blogs.length === 0 && (
-          <div className="text-center text-gray-500">No blogs found.</div>
+        {blogs.length === 0 && !loading && (
+          <div className="text-center py-8">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 max-w-md mx-auto">
+              <div className="text-gray-600 mb-2">No blogs found</div>
+              <div className="text-gray-500 text-sm">
+                {searchTerm ? 'Try adjusting your search terms.' : 'No approved blogs are available at the moment.'}
+              </div>
+            </div>
+          </div>
         )}
         {blogs.map((blog, idx) => (
           <BlogCard key={blog._id} blog={blog} large={idx === 0} />

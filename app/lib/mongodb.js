@@ -6,12 +6,21 @@ if (!process.env.MONGODB_URI) {
 
 const uri = process.env.MONGODB_URI;
 const isAtlas = uri.startsWith('mongodb+srv');
-const options = isAtlas
-  ? {
-      tls: true,
-      tlsAllowInvalidCertificates: process.env.NODE_ENV === 'development' ? true : false,
-    }
-  : {};
+
+// Simple connection options to avoid SSL issues
+const options = {
+  maxPoolSize: 5,
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  ...(isAtlas && {
+    ssl: true,
+    tls: true,
+    tlsAllowInvalidCertificates: true,
+    tlsAllowInvalidHostnames: true,
+    retryWrites: true,
+    w: 'majority'
+  })
+};
 
 let client;
 let clientPromise;

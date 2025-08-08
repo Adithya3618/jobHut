@@ -126,8 +126,18 @@ export default function ExternalJobsImport() {
       } else {
         url = `/api/external-jobs?title=${encodeURIComponent(filters.title)}&location=${encodeURIComponent(filters.location)}&source=${apiSource}`;
       }
+      
+      console.log('[ExternalJobsImport] Fetching from URL:', url);
+      console.log('[ExternalJobsImport] API Source:', apiSource);
+      console.log('[ExternalJobsImport] Filters:', filters);
+      
       const res = await fetch(url);
+      console.log('[ExternalJobsImport] Response status:', res.status);
+      console.log('[ExternalJobsImport] Response ok:', res.ok);
+      
       const data = await res.json();
+      console.log('[ExternalJobsImport] Response data:', data);
+      
       if (!res.ok) {
         if (res.status === 429) {
           setError('API quota exceeded. The external API has reached its monthly limit. Please try again later or contact support.');
@@ -136,12 +146,17 @@ export default function ExternalJobsImport() {
         }
         return;
       }
+      
       if (data.success && data.jobs) {
+        console.log('[ExternalJobsImport] Setting jobs:', data.jobs);
+        console.log('[ExternalJobsImport] Jobs count:', data.jobs.length);
         setJobs(data.jobs);
       } else {
+        console.log('[ExternalJobsImport] No jobs in response or invalid structure');
         setJobs([]);
       }
     } catch (err) {
+      console.error('[ExternalJobsImport] Error fetching jobs:', err);
       setError(err.message || 'Error fetching jobs');
     } finally {
       setLoading(false);

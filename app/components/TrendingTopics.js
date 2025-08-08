@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flame } from 'lucide-react';
+import Link from 'next/link';
 
 const trendingTopics = [
   'React Interview Questions',
@@ -22,12 +23,12 @@ export default function TrendingTopics() {
       <ul className="space-y-3">
         {trendingTopics.map((topic, idx) => (
           <li key={idx}>
-            <a
-              href="#"
+            <Link
+              href={`/blogs?search=${encodeURIComponent(topic)}`}
               className="block px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-700 transition-colors font-medium text-gray-700"
             >
               {topic}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
