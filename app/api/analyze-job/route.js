@@ -6,6 +6,7 @@ export async function POST(req) {
     if (!job) {
       return NextResponse.json({ error: 'Missing job data' }, { status: 400 });
     }
+    
     const apiKey = process.env.GOOGLE_AI_STUDIOUS;
     if (!apiKey) {
       return NextResponse.json({ error: 'Missing Google Gemini API key' }, { status: 500 });
